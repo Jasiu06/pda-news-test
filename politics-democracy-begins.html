@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Nigerian democracy begins amidst fierce debate and chaos — Forward!</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --blue: #1a4d8f;
+    --red: #cc1f1f;
+    --accent: #4a9eff;
+    --bg: #0e1117;
+    --bg-panel: #0e1117; 
+    --bg-card: #0e1117;  
+    --ink: #dde4ed;
+    --mid: #9baec2;    /* Brightened */
+    --muted: #7890a8;  /* Brightened */
+    --line: rgba(255,255,255,0.06);
+    --line-strong: rgba(255,255,255,0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .article-link {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* ── AQI TICKER ─────────────────────────────────── */
+  .aqi-bar {
+    background: var(--bg-panel);
+    color: #fff;
+    overflow: hidden;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .aqi-label {
+    background: var(--red);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    padding: 0 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  .aqi-track { flex: 1; overflow: hidden; height: 100%; }
+
+  .aqi-scroll {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    animation: scroll-left 28s linear infinite;
+    white-space: nowrap;
+  }
+
+  .aqi-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    border-right: 1px solid var(--line-strong);
+  }
+
+  .aqi-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .aqi-city { color: var(--muted); }
+  .aqi-val { font-weight: 600; }
+
+  @keyframes scroll-left {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ── MASTHEAD ───────────────────────────────────── */
+  .masthead {
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  
+  .masthead-inner {
+    padding: 20px 16px 16px; 
+  }
+
+  .masthead-top {
+    position: relative; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; 
+  }
+
+  .date-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--mid);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    line-height: 1; 
+  }
+
+  .edition-pill {
+    position: absolute; 
+    right: 0;
+    top: 50%; 
+    transform: translateY(-50%);
+    background: transparent;
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    border: 1px solid rgba(74,158,255,0.4);
+    border-radius: 2px;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; 
+    margin-bottom: 28px; /* Restored to 28px */
+  }
+
+  .wordmark img {
+    max-height: 60px; 
+    width: auto;
+    display: block;
+  }
+
+  .masthead-tagline {
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding-top: 20px;
+    border-top: 1px solid var(--line-strong);
+    margin-top: 0;
+  }
+
+  /* ── NAV ────────────────────────────────────────── */
+  .nav-strip {
+    background: var(--bg);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--line-strong);
+    cursor: grab;
+    user-select: none;
+  }
+  .nav-strip::-webkit-scrollbar { display: none; }
+
+  .nav-inner {
+    display: flex;
+  }
+  
+  .nav-item {
+    flex-shrink: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.15s;
+    border-right: 1px solid var(--line);
+    display: block;
+    text-decoration: none;
+  }
+
+  .nav-item:first-child {
+    border-left: 1px solid var(--line);
+  }
+
+  .nav-item.active { color: var(--ink); border-bottom: 2px solid var(--red); padding-bottom: 8px; }
+  .nav-item:hover { color: var(--mid); }
+
+  /* ── BREAKING ───────────────────────────────────── */
+  .breaking {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--line-strong);
+    display: block;
+    transition: background 0.15s;
+  }
+  
+  .breaking:hover {
+    background: #13181f;
+  }
+
+  .breaking:hover .breaking-text {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .breaking-inner {
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .breaking-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    background: var(--red);
+    color: #fff;
+    padding: 3px 7px;
+    flex-shrink: 0;
+    animation: blink 1.6s step-end infinite;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+  .breaking-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--mid);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: text-decoration 0.15s;
+  }
+
+  /* ── ARTICLE STYLES (NEW) ───────────────────────── */
+  .article-wrapper {
+    max-width: 800px; /* Constrains line length for optimal reading */
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    border: 1px solid rgba(204,31,31,0.35);
+    padding: 4px 8px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .article-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .article-deck {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--mid);
+    border-left: 3px solid var(--red);
+    padding-left: 14px;
+    margin-bottom: 16px;
+  }
+
+  .article-byline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 24px;
+  }
+
+  .article-byline b { color: var(--mid); }
+
+  .article-main-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: var(--bg-card); /* Placeholder color while loading */
+  }
+
+  .image-caption {
+    padding: 8px 0px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .article-body p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  /* Dropcap Styling */
+  .article-body p:first-child::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 0.8;
+    float: left;
+    margin-right: 10px;
+    margin-top: 6px;
+    color: var(--red);
+  }
+
+  .pull-quote {
+    border-top: 2px solid var(--red);
+    border-bottom: 1px solid var(--line-strong);
+    padding: 24px 0;
+    margin: 32px 0;
+  }
+
+  .pull-quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+
+  .pull-quote-attr {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-style: normal;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── TAGS ───────────────────────────────────────── */
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 32px 0;
+    border-top: 1px solid var(--line-strong);
+    margin-top: 24px;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+    text-transform: uppercase;
+    border: 1px solid var(--muted);
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tag:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* ── RELATED ARTICLES ───────────────────────────── */
+  .related-section {
+    padding: 24px 0;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .related-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .related-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line-strong);
+  }
+
+  .related-card {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  
+  .related-card:hover { 
+    background: #13181f; 
+  }
+  
+  .related-card:hover .related-headline {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .related-card:last-child { border-bottom: none; }
+
+  .related-info { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    padding: 0 12px;
+  }
+
+  .related-section-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .related-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 6px;
+    transition: text-decoration 0.15s;
+  }
+
+  .related-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────── */
+  .footer {
+    background: var(--bg-panel);
+    border-top: 1px solid var(--line-strong);
+    padding: 24px 16px; 
+  }
+  
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer-top {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-logo img {
+    max-height: 60px; 
+    width: auto;
+    display: block;
+  }
+
+  .footer-socials {
+    display: flex;
+    gap: 12px;
+  }
+
+  .social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .social-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .social-icon:hover {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
+  .footer-divider {
+    border-top: 1px solid var(--line-strong);
+    margin-bottom: 24px;
+  }
+
+  .footer-links-primary, .footer-links-secondary {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 12px;
+    row-gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+
+  .footer-links-primary a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.15s;
+  }
+
+  .footer-links-primary a:not(:last-child)::after {
+    content: '|';
+    color: var(--muted);
+    margin-left: 12px;
+    font-weight: 400;
+  }
+
+  .footer-links-secondary a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--mid);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+
+  .footer-links-secondary a:not(:last-child)::after {
+    content: '|';
+    color: var(--muted);
+    margin-left: 12px;
+  }
+
+  .footer-links-primary a:hover,
+  .footer-links-secondary a:hover {
+    color: var(--accent);
+  }
+
+  .footer-copyright {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── DESKTOP RESPONSIVENESS ─────────────────────── */
+  @media (min-width: 768px) {
+    .masthead-inner {
+      padding: 24px 32px 16px; 
+    }
+    
+    .nav-inner {
+      padding: 0 16px;
+      width: 100%; 
+    }
+
+    .nav-item {
+      flex: 1; 
+      text-align: center; 
+    }
+
+    .wordmark img {
+      max-height: 90px;
+    }
+
+    .footer-top {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Scaling up Article Typography for Desktop */
+    .article-headline {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .article-deck {
+      font-size: 20px;
+      margin-bottom: 24px;
+    }
+    .article-body p {
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .article-body p:first-child::first-letter {
+      font-size: 68px;
+      margin-top: 8px;
+    }
+    .pull-quote-text {
+      font-size: 26px;
+    }
+    .related-headline {
+      font-size: 18px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="aqi-bar">
+  <div class="aqi-label">🌫 AQI Nigeria</div>
+  <div class="aqi-track">
+    <div class="aqi-scroll" id="aqiScroll"></div>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="container masthead-inner">
+    <div class="masthead-top">
+      <span class="date-line">Wednesday · 8 May 2058</span>
+      <span class="edition-pill">Digital Edition</span>
+    </div>
+    <div class="wordmark">
+      <img src="assets/img/FORWARD_BOLD.png" alt="Forward! — The Voice of the People wordmark">
+    </div>
+    <div class="masthead-tagline">The Voice of the People · Est. 2057 · Lagos · Abuja · New Makoko · Port Harcourt</div>
+  </div>
+</header>
+
+<nav class="nav-strip">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-item">Today</a>
+    <a href="politics.html" class="nav-item active">Politics</a>
+    <a href="economy.html" class="nav-item">Economy</a>
+    <a href="lagos.html" class="nav-item">Lagos</a>
+    <a href="world.html" class="nav-item">World</a>
+    <a href="tech.html" class="nav-item">Tech</a>
+    <a href="culture.html" class="nav-item">Culture</a>
+    <a href="sport.html" class="nav-item">Sport</a>
+  </div>
+</nav>
+
+<a href="breaking-news-al-shahid.html" class="breaking article-link">
+  <div class="container breaking-inner">
+    <span class="breaking-tag">BREAKING</span>
+    <span class="breaking-text">Further Sexual Assault Allegations Against GOP Leadership Emerge · Live Updates</span>
+  </div>
+</a>
+
+<main class="container site-main">
+  
+  <article class="article-wrapper">
+    
+    <header class="article-header">
+      <div class="section-tag">Politics</div>
+      <h1 class="article-headline">Nigerian democracy begins amidst fierce debate and chaos</h1>
+      <p class="article-deck">Forward! reports on the first day of the Constitutional Assembly, including the judiciary hearing</p>
+      <div class="article-byline">By <b>Abraham Mutfwang</b> · 8 May 2058</div>
+      
+      <img src="assets/img/national-assembly.webp" class="article-main-img" alt="Outside of the National Assembly">
+      <div class="image-caption">Outside of the National Assembly</div>
+    </header>
+    
+    <div class="article-body">
+      <p>The first day of the National Assembly has been filled with both excitement and chaos. The first proposed law was to lower the threshold for constitutional amendments from 2/3rd to 60 percent, important given the dual-mandate of the current body as a Constitutional Convention. However, before it could be voted on, committees and appointments had to be passed first, which are expected to take several days. This resolution is supported by a broad coalition consisting of most major parties, except the PDA and MOTTAINAI. This coalition however, appeared to be fraying before the proposal was even passed, as disputes arose over how much to lower the threshold by.</p>
+      
+      <p>During the lunch break, in the assembly cafeteria, there was a mixture of friendly discussion and banter, as well as shocking accusations. While the Naija People’s Front(NPF) members, flung curses and insults at members of the PDA and other democratically-oriented political parties, a member of Salam! was overhead advocating the removal of all Igbo from government, including the recently elected speaker Alexander Okafor, who is an ethnic Igbo. This triggered a wave of reactions and a public statement from the speaker by the afternoon. The Salam! member was temporarily suspended from the party, pending an apology and mandatory sensitivity training. Nevertheless, this raises questions about the unstable grand coalition that brought Speaker Okafor to power, that technically included Salam! as well as other regionalist parties.</p>
+      
+      <p>Today was also filled with confusion about how the assembly was to actually function, Nigeria’s young democracy appears to be struggling to get on its feet, sometimes literally. Deputy Speaker Theodore Nwobi was unaware of his own appointment and asked during the lunch break “what is a Deputy Speaker?”. He appeared late for the first committee meeting in the afternoon due to a long bathroom break, raising questions about his and FRILN’s interest in the democratic process. Speaker Okafor also spent some time establishing committees due to the lack of adequate logistic support for the functioning of the assembly. Many committees had very unusual compositions, for example the presence of Mr. Goldberg of the Southern Renewal Party(SRP) on every single committee. At several points, hearings descended into chaos as Speaker Okafor reportedly forgot to have the Judiciary committee choose a chair. Immediately, a smattering of laws were proposed, from moderate proposals advocating for the expansion of the alcohol industry and mountaineering, to a radical Salam! proposal to rename the Lagos airport after Edmund Uruqhart, a New African Alliance(NAA) member who disappeared while under investigation by the BIC. Besides the racist outbursts from their members, the leader of Salam! was also spotted watching a movie on her phone while in the middle of a meeting in the afternoon.</p>
+      
+      <p>The judiciary committee gathered towards the evening for a hearing on the appointment of Mr. Supreme Court to the High Court as Chief Justice. No PDA members were seated in this committee, but several other members of major parties received seats. As soon as the session opened, Mr. Nkute al-Fuyyintis of the Group of People(GOP) attacked Mr. Court as immoral and un-Islamic, after the candidate disclosed his Hausa ethnicity to the Forgotten Farmers’ Alliance committee member. al-Fuyyintis then called him a “pseudo-atheist”, to which Mr. Court retorted: “Given that you were unable to even specify what you meant by ‘what will we be doing about unislamic acts in this country?’ when pressed, I think you should probably leave legal matters to me.” al-Fuyyintis then descended into a tirade defending wife-beating and continuing to accuse Mr. Court of being an infidel, only ending when threatened with removal from the room. al-Fuyyintis later returned to the committee and attempted to project a video using his phone. Other members of the committee then inquired about Mr. Court’s views on regional autonomy and Sharia courts, from members of the SRP and Salam! respectively. The latter topic dragged on for a long discussion that was finally ended by vote to focus on other questions, but not before the committee nearly came into a physical confrontation.</p>
+      
+      <div class="pull-quote">
+        <div class="pull-quote-text">"Given that you were unable to even specify what you meant by ‘what will we be doing about unislamic acts in this country?’ when pressed, I think you should probably leave legal matters to me."</div>
+        <div class="pull-quote-attr">— Supreme Court, Nominee for Chief Justice of the High Court</div>
+      </div>
+      
+      <p>Mr. Court reiterated that he was willing to accept regional autonomy within the bounds of the constitutional unity of Nigeria, and accepted the existence of Sharia courts so long as their rulings could stand in secular state courts. Notably, Mr. Court expressed that he was willing to accept Sharia courts handing down death penalties based on customary precedents, as long as they could also be appealed in state courts. However, he avoided answering many specific questions on land tenureship and vacillated on presidential powers, which are not strictly within the purview of the court.</p>
+      
+      <p>The committee ultimately chose to recommend Mr. Supreme Court to the National Assembly, though the end of the session nearly saw another fight between the FFA and GOP representatives. The full chamber proceeded to vote for Mr. Court and confirm him as Chief Justice of the High Court with 500 for, 120 against, and 4 abstaining. The voting itself proceeded smoothly, though some parties took some time to vote, carefully judging the strategic situation. The Southern Renewal Party initially voted yes, switched to no, and then switched back to yes. The People’s Democratic Alliance, trusting Khalil’s choice of a moderate and principled candidate, voted in favor. The passage of Mr. Supreme Court represents a first monumental step for Nigerian democracy, we can only hope that the future of our nation remains bright.</p>
+    </div>
+
+    <div class="tags-row">
+      <span class="tag">Politics</span>
+      <span class="tag">Parliament</span>
+      <span class="tag">Progressive</span>
+      <span class="tag">Opposition</span>
+      <span class="tag">Elections</span>
+      <span class="tag">Democracy</span>
+    </div>
+
+    <div class="related-section">
+      <div class="related-title">More Stories</div>
+
+      <a href="progressive-parties-group.html" class="related-card article-link">
+        <div class="related-info">
+          <div class="related-section-tag">Politics</div>
+          <div class="related-headline">Progressive Parties Create Joint Parliamentary Group</div>
+          <div class="related-time">4 hours ago</div>
+        </div>
+      </a>
+
+      <a href="friln-chairman.html" class="related-card article-link">
+        <div class="related-info">
+          <div class="related-section-tag">Politics</div>
+          <div class="related-headline">FRILN Chairman reportedly unaware of appointment as Deputy Speaker, asks "What is a deputy speaker" in the National Assembly</div>
+          <div class="related-time">5 hours ago</div>
+        </div>
+      </a>
+
+      <a href="lagos-accident.html" class="related-card article-link">
+        <div class="related-info">
+          <div class="related-section-tag">Lagos</div>
+          <div class="related-headline">Yet Another Accident at the Main Junction to Lagos</div>
+          <div class="related-time">Yesterday</div>
+        </div>
+      </a>
+    </div>
+
+  </article>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    
+    <div class="footer-top">
+      <div class="footer-logo">
+        <img src="assets/img/FORWARD_BOLD.png" alt="Forward! logo">
+      </div>
+      <div class="footer-socials">
+        <a href="https://facebook.com/forwardnews" class="social-icon" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/></svg>
+        </a>
+        <a href="https://linkedin.com/company/forwardnews" class="social-icon" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://youtube.com/forwardnews" class="social-icon" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+        <a href="https://twitter.com/forwardnews" class="social-icon" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+    </div>
+    
+    <div class="footer-divider"></div>
+
+    <div class="footer-links-primary">
+      <a href="about.html">About us</a>
+      <a href="staff.html">Our staff</a>
+      <a href="ethics.html">Ethics & Guidelines</a>
+      <a href="contact.html">Contact us</a>
+      <a href="pitch.html">How to pitch Forward!</a>
+      <a href="newsletters.html">Newsletters</a>
+      <a href="archives.html">Archives</a>
+    </div>
+
+    <div class="footer-links-secondary">
+      <a href="privacy.html">Privacy Notice</a>
+      <a href="terms.html">Terms of Use</a>
+      <a href="cookies.html">Cookie Policy</a>
+      <a href="do-not-sell.html">Do Not Sell or Share My Personal Data</a>
+      <a href="licensing.html">Licensing</a>
+      <a href="accessibility.html">Accessibility</a>
+      <a href="status.html">Platform Status</a>
+      <a href="careers.html">Careers</a>
+    </div>
+
+    <div class="footer-copyright">
+      © 2058 FORWARD! MEDIA GROUP, LLC. ALL RIGHTS RESERVED.
+    </div>
+
+  </div>
+</footer>
+
+<script>
+// AQI data for major Nigerian cities
+const aqiData = [
+  { city: "Lagos",         aqi: 142, status: "Unhealthy",  color: "#e65100" },
+  { city: "Abuja",         aqi:  68, status: "Moderate",   color: "#f4b400" },
+  { city: "New Makoko",    aqi:  31, status: "Good",       color: "#00b050" },
+  { city: "Kano",          aqi: 188, status: "Unhealthy",  color: "#e65100" },
+  { city: "Ibadan",        aqi:  95, status: "Moderate",   color: "#f4b400" },
+  { city: "Port Harcourt", aqi: 211, status: "V.Unhealthy",color: "#b71c1c" },
+  { city: "Enugu",         aqi:  55, status: "Moderate",   color: "#f4b400" },
+  { city: "Kaduna",        aqi: 121, status: "Unhealthy",  color: "#e65100" },
+  { city: "Benin City",    aqi:  44, status: "Good",       color: "#00b050" },
+  { city: "Maiduguri",     aqi: 163, status: "Unhealthy",  color: "#e65100" },
+];
+
+// Build AQI ticker
+const scroll = document.getElementById('aqiScroll');
+const buildTicker = () => {
+  let html = '';
+  for (let i = 0; i < 2; i++) {
+    aqiData.forEach(d => {
+      html += `<span class="aqi-item">
+        <span class="aqi-dot" style="background:${d.color}"></span>
+        <span class="aqi-city">${d.city}</span>
+        <span class="aqi-val" style="color:${d.color}">${d.aqi}</span>
+      </span>`;
+    });
+  }
+  scroll.innerHTML = html;
+};
+buildTicker();
+
+// Click/touch drag scrolling for nav strip
+const nav = document.querySelector('.nav-strip');
+let isDown = false, startX, scrollLeft;
+
+nav.addEventListener('mousedown', e => {
+  isDown = true;
+  nav.style.cursor = 'grabbing';
+  startX = e.pageX - nav.offsetLeft;
+  scrollLeft = nav.scrollLeft;
+});
+nav.addEventListener('mouseleave', () => { isDown = false; nav.style.cursor = ''; });
+nav.addEventListener('mouseup', () => { isDown = false; nav.style.cursor = ''; });
+nav.addEventListener('mousemove', e => {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - nav.offsetLeft;
+  nav.scrollLeft = scrollLeft - (x - startX);
+});
+</script>
+
+</body>
+</html>
