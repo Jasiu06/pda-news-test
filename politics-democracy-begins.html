@@ -19,8 +19,8 @@
     --bg-panel: #0e1117; 
     --bg-card: #0e1117;  
     --ink: #dde4ed;
-    --mid: #9baec2;    /* Brightened */
-    --muted: #7890a8;  /* Brightened */
+    --mid: #9baec2;    
+    --muted: #7890a8;  
     --line: rgba(255,255,255,0.06);
     --line-strong: rgba(255,255,255,0.1);
   }
@@ -154,7 +154,13 @@
     align-items: center;
     justify-content: center;
     padding: 0; 
-    margin-bottom: 28px; /* Restored to 28px */
+    margin-bottom: 28px; 
+  }
+
+  /* Structural fix to ensure anchor tag doesn't break flex alignment */
+  .wordmark a {
+    display: block;
+    text-decoration: none;
   }
 
   .wordmark img {
@@ -266,9 +272,9 @@
     transition: text-decoration 0.15s;
   }
 
-  /* ── ARTICLE STYLES (NEW) ───────────────────────── */
+  /* ── ARTICLE STYLES ───────────────────────── */
   .article-wrapper {
-    max-width: 800px; /* Constrains line length for optimal reading */
+    max-width: 800px; 
     margin: 0 auto;
     padding: 24px 16px;
   }
@@ -320,7 +326,7 @@
     width: 100%;
     height: auto;
     display: block;
-    background: var(--bg-card); /* Placeholder color while loading */
+    background: var(--bg-card); 
   }
 
   .image-caption {
@@ -509,6 +515,11 @@
     align-items: center;
   }
 
+  .footer-logo a {
+    display: block;
+    text-decoration: none;
+  }
+
   .footer-logo img {
     max-height: 60px; 
     width: auto;
@@ -675,7 +686,9 @@
       <span class="edition-pill">Digital Edition</span>
     </div>
     <div class="wordmark">
-      <img src="assets/img/FORWARD_BOLD.png" alt="Forward! — The Voice of the People wordmark">
+      <a href="index.html">
+        <img src="assets/img/FORWARD_BOLD.png" alt="Forward! — The Voice of the People wordmark">
+      </a>
     </div>
     <div class="masthead-tagline">The Voice of the People · Est. 2057 · Lagos · Abuja · New Makoko · Port Harcourt</div>
   </div>
@@ -694,10 +707,10 @@
   </div>
 </nav>
 
-<a href="breaking-news-al-shahid.html" class="breaking article-link">
+<a href="breaking-news-gop.html" class="breaking article-link">
   <div class="container breaking-inner">
     <span class="breaking-tag">BREAKING</span>
-    <span class="breaking-text">Further Sexual Assault Allegations Against GOP Leadership Emerge · Live Updates</span>
+    <span class="breaking-text">Further sexual assault allegations against GOP leadership emerge · Live updates</span>
   </div>
 </a>
 
@@ -749,7 +762,7 @@
       <a href="progressive-parties-group.html" class="related-card article-link">
         <div class="related-info">
           <div class="related-section-tag">Politics</div>
-          <div class="related-headline">Progressive Parties Create Joint Parliamentary Group</div>
+          <div class="related-headline">Progressive parties create joint parliamentary group</div>
           <div class="related-time">4 hours ago</div>
         </div>
       </a>
@@ -757,7 +770,7 @@
       <a href="friln-chairman.html" class="related-card article-link">
         <div class="related-info">
           <div class="related-section-tag">Politics</div>
-          <div class="related-headline">FRILN Chairman reportedly unaware of appointment as Deputy Speaker, asks "What is a deputy speaker" in the National Assembly</div>
+          <div class="related-headline">FRILN chairman reportedly unaware of appointment as deputy speaker, asks "what is a deputy speaker" in the National Assembly</div>
           <div class="related-time">5 hours ago</div>
         </div>
       </a>
@@ -765,7 +778,7 @@
       <a href="lagos-accident.html" class="related-card article-link">
         <div class="related-info">
           <div class="related-section-tag">Lagos</div>
-          <div class="related-headline">Yet Another Accident at the Main Junction to Lagos</div>
+          <div class="related-headline">Yet another accident at the main junction to Lagos</div>
           <div class="related-time">Yesterday</div>
         </div>
       </a>
@@ -779,7 +792,9 @@
     
     <div class="footer-top">
       <div class="footer-logo">
-        <img src="assets/img/FORWARD_BOLD.png" alt="Forward! logo">
+        <a href="index.html">
+          <img src="assets/img/FORWARD_BOLD.png" alt="Forward! logo">
+        </a>
       </div>
       <div class="footer-socials">
         <a href="https://facebook.com/forwardnews" class="social-icon" aria-label="Facebook">
