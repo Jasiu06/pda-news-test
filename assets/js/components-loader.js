@@ -1,10 +1,29 @@
+// Function to get the root path relative to the current file
+function getRootPath() {
+    const path = window.location.pathname;
+    const depth = (path.match(/\//g) || []).length - 1;
+    // On GitHub Pages, the first segment might be the repo name, so we check if it's there
+    // For local testing on a server, depth is usually correct.
+    return "../".repeat(Math.max(0, depth));
+}
+
 async function loadComponent(id, file) {
     const el = document.getElementById(id);
     if (!el) return;
     try {
-        const response = await fetch(file);
+        // We use root-relative fetching to ensure it works from subfolders
+        // For simplicity in this static setup, we'll try to determine the root
+        const root = getRootPath();
+        const response = await fetch(root + file);
         if (response.ok) {
-            const html = await response.text();
+            let html = await response.text();
+            
+            // Fix paths in the loaded HTML to be relative to the root
+            if (root !== "") {
+                html = html.replace(/href="([^"h][^"]*)"/g, `href="${root}$1"`);
+                html = html.replace(/src="([^"h][^"]*)"/g, `src="${root}$1"`);
+            }
+            
             el.innerHTML = html;
             return true;
         }

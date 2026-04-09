@@ -13,10 +13,7 @@ const aqiData = [
 
 function initAQITicker() {
   const scroll = document.getElementById('aqiScroll');
-  if (!scroll) {
-      console.warn("aqiScroll element not found");
-      return;
-  }
+  if (!scroll) return false;
 
   let html = '';
   // Repeat for smooth infinite loop
@@ -30,11 +27,12 @@ function initAQITicker() {
     });
   }
   scroll.innerHTML = html;
+  return true;
 }
 
 function initAQIPanel() {
   const panel = document.getElementById('aqiCities');
-  if (!panel) return;
+  if (!panel) return false;
 
   panel.innerHTML = '';
   aqiData.forEach(d => {
@@ -49,17 +47,36 @@ function initAQIPanel() {
         <span class="aqi-status-badge" style="background:${d.color}22; color:${d.color}">${d.status}</span>
       </div>`;
   });
+  return true;
 }
 
-// Global initialization function to be called by components-loader.js
+// Global initialization function
 window.initAQI = function() {
-    initAQITicker();
-    initAQIPanel();
+    const tickerDone = initAQITicker();
+    const panelDone = initAQIPanel();
+    return tickerDone || panelDone;
 };
 
-// Also try to init on load just in case it's already in the DOM
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('aqiScroll')) {
-        window.initAQI();
+// Auto-retry mechanism to handle dynamic loading
+(function autoInit() {
+    let tickerInitialized = false;
+    let panelInitialized = false;
+    
+    const attempt = () => {
+        if (!tickerInitialized) tickerInitialized = initAQITicker();
+        if (!panelInitialized) panelInitialized = initAQIPanel();
+        
+        // If both are found or we've tried enough, stop.
+        // On article pages, panel will never be found, so we just keep trying for ticker.
+        if (tickerInitialized && (panelInitialized || !document.querySelector('.aqi-panel'))) {
+            return; 
+        }
+        setTimeout(attempt, 500);
+    };
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attempt);
+    } else {
+        attempt();
     }
-});
+})();
