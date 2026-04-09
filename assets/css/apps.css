@@ -1,330 +1,429 @@
-/* ==========================================================================
-   INTERACTIVE APP STYLES (Parliament Builder, etc.)
-   ========================================================================== */
+let maxSeats = 644;
+let activeDraggedParty = null;
 
-/* ── HEADER OVERWRITE ────────────────────────────────── */
-@media (min-width: 768px) {
-    .article-header {
-        grid-template-columns: 1fr 0fr;
+let parties = [
+  { name: "Salam!", seats: 121, color: "#55e67b", inCoalition: false },
+  { name: "ABPL", seats: 91, color: "#2563eb", inCoalition: true },
+  { name: "Southern Renewal Party", seats: 84, color: "#eab308", inCoalition: false },
+  { name: "Group of the People", seats: 83, color: "#093314", inCoalition: false },
+  { name: "NDF", seats: 56, color: "#08992e", inCoalition: false },
+  { name: "FRILN", seats: 48, color: "#f59e0b", inCoalition: false },
+  { name: "New African Alliance", seats: 36, color: "#3ae0d8", inCoalition: true },
+  { name: "Naija Patriotic Army", seats: 29, color: "#000000", inCoalition: false },
+  { name: "Neo Omu Aro", seats: 12, color: "#450b0b", inCoalition: false },
+  { name: "MOTTAINAI", seats: 15, color: "#22c55e", inCoalition: true },
+  { name: "GLAND", seats: 13, color: "#a054c7", inCoalition: true },
+  { name: "FFA", seats: 21, color: "#e6e285", inCoalition: false },
+  { name: "People's Dem. Alliance", seats: 11, color: "#fc0f0f", inCoalition: true },
+  { name: "ISPN", seats: 4, color: "#d2ffc7", inCoalition: true }
+];
+
+function updateChart() {
+  const assignedSeats = parties.reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
+  const unassignedSeats = Math.max(0, maxSeats - assignedSeats);
+  const chartTotal = Math.max(maxSeats, assignedSeats);
+  
+  const govSeats = parties.filter(p => p.inCoalition).reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
+  const majorityNeeded = Math.floor(maxSeats / 2) + 1;
+  const superMajorityNeeded = Math.floor((maxSeats * 2) / 3) + 1;
+  
+  const hasMajority = govSeats >= majorityNeeded;
+  const hasSuperMajority = govSeats >= superMajorityNeeded;
+
+  const svg = document.getElementById('parliament-svg');
+  if (!svg) return;
+  svg.innerHTML = '';
+  
+  const cx = 200;
+  const cy = 200;
+  const r0 = 60;  
+  const r1 = 180; 
+
+  const renderParties = [];
+  parties.forEach((p, idx) => { if (p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
+  parties.forEach((p, idx) => { if (!p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
+  
+  if (unassignedSeats > 0) {
+    renderParties.push({ party: { name: "Unassigned", seats: unassignedSeats, color: "rgba(255,255,255,0.15)" }, originalIndex: -1 });
+  }
+
+  if (chartTotal > 0) {
+    let rows = Math.max(3, Math.ceil(Math.sqrt(chartTotal / 3)));
+    if (chartTotal > 800) rows = Math.ceil(Math.sqrt(chartTotal / 4)); 
+    
+    let rowRadii = [];
+    let totalArc = 0;
+    for(let i=0; i<rows; i++) {
+        let r = r0 + (i * (r1 - r0) / Math.max(1, rows - 1));
+        rowRadii.push(r);
+        totalArc += Math.PI * r;
     }
+    
+    let seatsRemaining = chartTotal;
+    let seatsPerRow = rowRadii.map((r, i) => {
+        if (i === rows - 1) return seatsRemaining;
+        let seats = Math.round(chartTotal * (Math.PI * r) / totalArc);
+        if (seats > seatsRemaining) seats = seatsRemaining;
+        seatsRemaining -= seats;
+        return seats;
+    });
+    
+    let positions = [];
+    seatsPerRow.forEach((seats, rowIndex) => {
+        let r = rowRadii[rowIndex];
+        for(let i=0; i<seats; i++) {
+            let angle = seats === 1 ? Math.PI / 2 : Math.PI - (i / (seats - 1)) * Math.PI;
+            positions.push({
+                x: cx + r * Math.cos(angle),
+                y: cy - r * Math.sin(angle),
+                angle: angle
+            });
+        }
+    });
+    
+    positions.sort((a, b) => b.angle - a.angle);
+    
+    const maxDotRadius = ((r1 - r0) / rows) / 2 * 0.8; 
+    const dotRadius = Math.min(maxDotRadius, (Math.PI * r1) / seatsPerRow[rows-1] / 2 * 0.8);
+
+    let dotIndex = 0;
+    renderParties.forEach((item) => {
+      const party = item.party;
+      const pIdx = item.originalIndex;
+      const seats = parseInt(party.seats || 0);
+
+      for(let i=0; i<seats; i++) {
+          if(dotIndex >= positions.length) break;
+          const pos = positions[dotIndex];
+          
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', pos.x);
+          circle.setAttribute('cy', pos.y);
+          circle.setAttribute('r', dotRadius);
+          
+          if (party.name === "Unassigned") {
+            circle.setAttribute('fill', 'none');
+            circle.setAttribute('stroke', party.color);
+            circle.setAttribute('stroke-width', Math.max(1, dotRadius * 0.3));
+            circle.style.cursor = "default";
+          } else {
+            circle.setAttribute('fill', party.color);
+            circle.dataset.partyIndex = pIdx; 
+            
+            if (activeDraggedParty === party) {
+              circle.style.cursor = 'grabbing';
+            } else {
+              circle.style.cursor = 'grab';
+            }
+            
+            if (party.inCoalition) {
+              circle.setAttribute('stroke', 'rgba(255,255,255,0.8)');
+              circle.setAttribute('stroke-width', Math.max(1, dotRadius * 0.25));
+            } else {
+              circle.setAttribute('fill-opacity', '0.25');
+            }
+
+            let clickStartTime = 0;
+            let startX, startY;
+
+            circle.addEventListener('mousedown', (e) => {
+              activeDraggedParty = party;
+              clickStartTime = Date.now();
+              startX = e.clientX;
+              startY = e.clientY;
+              circle.style.cursor = 'grabbing';
+              
+              const onMouseMove = (moveEvent) => {
+                if (!activeDraggedParty) return;
+                const currentPIdx = parties.indexOf(activeDraggedParty);
+                const elemBelow = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
+                if (elemBelow && elemBelow.tagName === 'circle' && elemBelow.dataset.partyIndex !== undefined) {
+                  const targetPIdx = parseInt(elemBelow.dataset.partyIndex);
+                  if (targetPIdx !== -1 && targetPIdx !== currentPIdx) {
+                    const movedItem = parties.splice(currentPIdx, 1)[0];
+                    parties.splice(targetPIdx, 0, movedItem);
+                    fullRender();
+                  }
+                }
+              };
+
+              const onMouseUp = (upEvent) => {
+                const dragDuration = Date.now() - clickStartTime;
+                const dragDist = Math.sqrt(Math.pow(upEvent.clientX - startX, 2) + Math.pow(upEvent.clientY - startY, 2));
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                activeDraggedParty = null;
+                circle.style.cursor = 'grab';
+                if (dragDuration < 250 && dragDist < 5) {
+                  party.inCoalition = !party.inCoalition;
+                  fullRender();
+                }
+              };
+
+              document.addEventListener('mousemove', onMouseMove);
+              document.addEventListener('mouseup', onMouseUp);
+            });
+          }
+          svg.appendChild(circle);
+          dotIndex++;
+      }
+    });
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', cx);
+    line.setAttribute('y1', cy - r0 + 10);
+    line.setAttribute('x2', cx);
+    line.setAttribute('y2', cy - r1 - 10);
+    line.setAttribute('stroke', 'var(--line-strong)');
+    line.setAttribute('stroke-width', '2');
+    line.setAttribute('stroke-dasharray', '4,4');
+    svg.appendChild(line);
+  }
+
+  let counterColor = assignedSeats > maxSeats ? "var(--red)" : "var(--ink)";
+  const totalCounter = document.getElementById('total-seat-counter');
+  if (totalCounter) {
+    totalCounter.innerHTML = `<span style="color:${counterColor}">${assignedSeats}</span> / ${maxSeats} Seats`;
+  }
+  
+  let statusText = assignedSeats > maxSeats ? "OVER CAPACITY" : (hasSuperMajority ? "SUPERMAJORITY" : (hasMajority ? "MAJORITY" : "MINORITY"));
+  let statusClass = assignedSeats > maxSeats ? "majority-error" : (hasSuperMajority ? "majority-super" : (hasMajority ? "majority-yes" : "majority-no"));
+  let neededText = hasSuperMajority ? `${superMajorityNeeded} needed` : `${majorityNeeded} needed`;
+
+  // GENEROWANIE OSI PARLAMENTU
+  let axisHtml = `<div class="status-axis"><div class="status-axis-inner">`;
+  renderParties.forEach(item => {
+    const p = item.party;
+    const pSeats = parseInt(p.seats || 0);
+    if (pSeats > 0) {
+      let pct = (pSeats / maxSeats) * 100;
+      axisHtml += `<div class="status-axis-segment" style="width: ${pct}%; background-color: ${p.color};" title="${p.name} (${p.seats})"></div>`;
+    }
+  });
+  axisHtml += `</div>
+    <div class="axis-marker majority-marker" style="left: ${(majorityNeeded / maxSeats) * 100}%;"></div>
+    <div class="axis-marker supermajority-marker" style="left: ${(superMajorityNeeded / maxSeats) * 100}%;"></div>
+  </div>`;
+
+  const statusPanel = document.getElementById('status-panel');
+  if (statusPanel) {
+    statusPanel.innerHTML = `
+      <div class="status-panel-top">
+        <div class="status-stat"><span class="status-label">Gov. Seats</span><span class="status-value">${govSeats}</span></div>
+        <div class="status-stat" style="text-align: right;">
+          <span class="status-label">Status</span>
+          <span class="status-majority-text ${statusClass}">${maxSeats === 0 ? 'NO DATA' : statusText}</span>
+          <span style="font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--muted);">${neededText}</span>
+        </div>
+      </div>
+      ${axisHtml}
+    `;
+  }
 }
 
-/* ── VIZ MODULE ────────────────────────────────── */
-.viz-module {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+function renderSidebar() {
+  const list = document.getElementById('party-editor-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  parties.forEach((party, index) => {
+    const row = document.createElement('div');
+    row.className = 'party-row' + (party.inCoalition ? ' is-in-coalition' : '');
+    row.dataset.index = index;
+    row.innerHTML = `
+      <div class="party-row-top">
+        <div class="drag-handle" title="Drag to reorder">⋮</div>
+        <input type="color" class="party-color" data-index="${index}" value="${party.color}">
+        <input type="text" class="party-name" data-index="${index}" value="${party.name}" placeholder="Party Name">
+        <button class="party-remove" data-index="${index}" aria-label="Remove Party">×</button>
+      </div>
+      <div class="party-row-bottom">
+        <div class="party-seats-controls">
+          <span style="margin-right: 6px;">Seats:</span>
+          <button class="seat-btn minus-btn" data-index="${index}">−</button>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" class="party-seats" data-index="${index}" value="${party.seats}">
+          <button class="seat-btn plus-btn" data-index="${index}">+</button>
+        </div>
+        <label class="party-coalition-wrap">
+          <input type="checkbox" class="party-coalition" data-index="${index}" ${party.inCoalition ? 'checked' : ''}>
+          In Government
+        </label>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+
+  attachEditorListeners();
 }
 
-.viz-module svg {
-  width: 100%;
-  max-width: 800px;
-  height: auto;
-  overflow: visible;
+function fullRender() {
+  renderSidebar();
+  updateChart();
 }
 
-/* ── STATUS PANEL ──────────────────────────────── */
-.status-panel {
-  margin-top: 48px;
-  width: 100%;
-  max-width: 800px;
-  border-top: 1px solid var(--line-strong);
-  padding-top: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+function attachEditorListeners() {
+  document.querySelectorAll('.party-name').forEach(input => {
+    input.addEventListener('input', (e) => {
+      parties[e.target.dataset.index].name = e.target.value;
+    });
+  });
+
+  document.querySelectorAll('.party-color').forEach(input => {
+    input.addEventListener('input', (e) => {
+      parties[e.target.dataset.index].color = e.target.value;
+      updateChart(); 
+    });
+  });
+
+  document.querySelectorAll('.minus-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pIndex = parseInt(e.target.dataset.index);
+      let currentSeats = parseInt(parties[pIndex].seats || 0);
+      if (currentSeats > 0) {
+        parties[pIndex].seats = currentSeats - 1;
+        document.querySelector(`.party-seats[data-index="${pIndex}"]`).value = parties[pIndex].seats;
+        updateChart();
+      }
+    });
+  });
+
+  document.querySelectorAll('.plus-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pIndex = parseInt(e.target.dataset.index);
+      let currentSeats = parseInt(parties[pIndex].seats || 0);
+      
+      let otherSeatsTotal = 0;
+      parties.forEach((p, idx) => {
+        if (idx !== pIndex) otherSeatsTotal += parseInt(p.seats || 0);
+      });
+      const maxAllowed = maxSeats - otherSeatsTotal;
+
+      if (currentSeats < maxAllowed) {
+        parties[pIndex].seats = currentSeats + 1;
+        document.querySelector(`.party-seats[data-index="${pIndex}"]`).value = parties[pIndex].seats;
+        updateChart();
+      }
+    });
+  });
+
+  document.querySelectorAll('.party-seats').forEach(input => {
+    input.addEventListener('focus', function() { this.select(); });
+
+    input.addEventListener('input', (e) => {
+      const pIndex = parseInt(e.target.dataset.index);
+      let rawVal = e.target.value.replace(/\D/g, ''); 
+      
+      if (rawVal === "") {
+        parties[pIndex].seats = 0;
+        updateChart();
+        return;
+      }
+
+      let newSeats = parseInt(rawVal, 10);
+      let otherSeatsTotal = 0;
+      parties.forEach((p, idx) => {
+        if (idx !== pIndex) otherSeatsTotal += parseInt(p.seats || 0);
+      });
+
+      const maxAllowed = maxSeats - otherSeatsTotal;
+      if (newSeats > maxAllowed) newSeats = maxAllowed;
+      
+      e.target.value = newSeats; 
+      parties[pIndex].seats = newSeats;
+      updateChart();
+    });
+
+    input.addEventListener('blur', (e) => {
+      const pIndex = parseInt(e.target.dataset.index);
+      e.target.value = parties[pIndex].seats; 
+      updateChart();
+    });
+  });
+
+  document.querySelectorAll('.party-coalition').forEach(input => {
+    input.addEventListener('change', (e) => {
+      const isChecked = e.target.checked;
+      parties[e.target.dataset.index].inCoalition = isChecked;
+      const row = e.target.closest('.party-row');
+      if (isChecked) row.classList.add('is-in-coalition');
+      else row.classList.remove('is-in-coalition');
+      updateChart(); 
+    });
+  });
+
+  document.querySelectorAll('.party-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      parties.splice(e.target.dataset.index, 1);
+      fullRender(); 
+    });
+  });
+
+  let draggedIndex = null;
+
+  document.querySelectorAll('.drag-handle').forEach(handle => {
+    handle.addEventListener('mouseenter', function() {
+      this.closest('.party-row').setAttribute('draggable', 'true');
+    });
+    handle.addEventListener('mouseleave', function() {
+      this.closest('.party-row').removeAttribute('draggable');
+    });
+  });
+
+  document.querySelectorAll('.party-row').forEach(row => {
+    row.addEventListener('dragstart', function(e) {
+      draggedIndex = parseInt(this.dataset.index);
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => this.classList.add('dragging'), 0);
+    });
+
+    row.addEventListener('dragend', function() {
+      this.classList.remove('dragging');
+      document.querySelectorAll('.party-row').forEach(r => r.classList.remove('drag-over'));
+      this.removeAttribute('draggable');
+    });
+
+    row.addEventListener('dragover', function(e) {
+      e.preventDefault(); 
+      this.classList.add('drag-over');
+    });
+
+    row.addEventListener('dragleave', function() {
+      this.classList.remove('drag-over');
+    });
+
+    row.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+      const targetIndex = parseInt(this.dataset.index);
+      
+      if (draggedIndex !== null && draggedIndex !== targetIndex) {
+        const movedItem = parties.splice(draggedIndex, 1)[0];
+        parties.splice(targetIndex, 0, movedItem);
+        fullRender();
+      }
+    });
+  });
 }
 
-.status-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+document.addEventListener('DOMContentLoaded', () => {
+  const maxSeatsInput = document.getElementById('input-max-seats');
+  const addPartyBtn = document.getElementById('btn-add-party');
 
-.status-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 9px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
+  if (maxSeatsInput) {
+    maxSeatsInput.value = maxSeats;
+    maxSeatsInput.disabled = true; 
+  }
 
-.status-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--ink);
-  line-height: 1;
-}
+  if (addPartyBtn) {
+    addPartyBtn.addEventListener('click', () => {
+      const assignedSeats = parties.reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
+      const remainingSeats = maxSeats - assignedSeats;
+      const newPartySeats = Math.min(10, remainingSeats); 
+      
+      parties.push({ name: "New Faction", seats: newPartySeats, color: "#ffffff", inCoalition: false });
+      fullRender();
+    });
+  }
 
-.status-majority-text {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.majority-yes { color: #22c55e; }
-.majority-no { color: var(--red); }
-.majority-super { color: #8b5cf6; }
-.majority-error { color: #f59e0b; }
-
-/* ── SIDEBAR & EDITOR ───────────────────────────── */
-.topic-sidebar {
-  display: flex;
-  flex-direction: column;
-  max-height: 520px;
-  height: 100vh;
-}
-
-.sidebar-header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.sidebar-header-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--bg);
-  padding: 8px;
-  border: 1px solid var(--line-strong);
-}
-
-.sidebar-header-bottom span {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 12px;
-  color: var(--ink);
-  text-transform: none;
-  letter-spacing: normal;
-}
-
-.sidebar-header-bottom input {
-  width: 70px;
-  background: var(--bg-card);
-  border: 1px solid var(--line-strong);
-  color: var(--ink);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  padding: 4px;
-  text-align: center;
-  outline: none;
-}
-
-.sidebar-header-bottom input:focus {
-  border-color: var(--accent);
-}
-
-.sidebar-header-bottom input:disabled {
-  background: var(--bg-panel);
-  color: var(--muted);
-  cursor: not-allowed;
-  border-color: transparent;
-}
-
-.party-editor-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
-  flex-grow: 1;
-  overflow-y: auto;
-  padding-right: 12px;
-  margin-right: -12px;
-  min-height: 0;
-}
-
-.party-editor-list::-webkit-scrollbar {
-  width: 6px;
-}
-.party-editor-list::-webkit-scrollbar-track {
-  background: var(--bg-panel); 
-  border-radius: 4px;
-}
-.party-editor-list::-webkit-scrollbar-thumb {
-  background: var(--line-strong); 
-  border-radius: 4px;
-}
-.party-editor-list::-webkit-scrollbar-thumb:hover {
-  background: var(--muted); 
-}
-
-.party-row {
-  background: var(--bg-card);
-  border: 1px solid var(--line-strong);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: all 0.2s ease;
-  opacity: 0.6;
-}
-
-.party-row.is-in-coalition {
-  opacity: 1;
-  border-color: var(--accent);
-  background: rgba(74, 158, 255, 0.05);
-  box-shadow: inset 0 0 20px rgba(74, 158, 255, 0.05);
-}
-
-.party-row.dragging { opacity: 0.4; }
-.party-row.drag-over { border-color: var(--accent); border-top-width: 3px; }
-.party-row:hover { border-color: var(--muted); opacity: 0.9; }
-.party-row.is-in-coalition:hover { opacity: 1; border-color: var(--accent); }
-
-.party-row-top { display: flex; align-items: center; gap: 8px; }
-
-.drag-handle {
-  cursor: grab;
-  color: var(--muted);
-  font-size: 16px;
-  padding: 0 4px;
-  user-select: none;
-}
-
-.drag-handle:active { cursor: grabbing; }
-
-.party-color {
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.party-name {
-  flex: 1;
-  background: transparent;
-  border: none;
-  border-bottom: 1px dashed var(--line-strong);
-  color: var(--ink);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 4px 0;
-  outline: none;
-}
-
-.party-name:focus { border-bottom-color: var(--accent); }
-
-.party-remove {
-  background: transparent;
-  border: none;
-  color: var(--muted);
-  font-size: 18px;
-  cursor: pointer;
-  padding: 4px;
-  line-height: 1;
-}
-.party-remove:hover { color: var(--red); }
-
-.party-row-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: var(--mid);
-  text-transform: uppercase;
-}
-
-/* Nowy design dla inputu liczby miejsc z - / + */
-.party-seats-controls {
-  display: flex;
-  align-items: center;
-}
-
-.seat-btn {
-  width: 22px;
-  height: 22px;
-  background: var(--bg-panel);
-  border: 1px solid var(--line-strong);
-  color: var(--ink);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-  padding: 0;
-  outline: none;
-}
-
-.seat-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.party-seats {
-  width: 38px;
-  background: var(--bg);
-  border-top: 1px solid var(--line-strong);
-  border-bottom: 1px solid var(--line-strong);
-  border-left: none;
-  border-right: none;
-  color: var(--ink);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  padding: 2px 0;
-  text-align: center; 
-  outline: none;
-  border-radius: 0;
-}
-
-.party-seats:focus {
-  border-top-color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-
-.party-coalition-wrap { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-
-.party-coalition {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid var(--muted);
-  cursor: pointer;
-  position: relative;
-  background: transparent;
-  outline: none;
-  transition: all 0.2s ease;
-}
-
-.party-coalition:checked {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-
-.party-coalition:checked::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px; 
-  height: 6px;
-  background: var(--bg);
-  border-radius: 50%;
-}
-
-.add-party-btn {
-  width: 100%;
-  padding: 12px;
-  background: transparent;
-  border: 1px dashed var(--muted);
-  color: var(--mid);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
-}
-
-.add-party-btn:hover { color: var(--ink); border-color: var(--ink); }
+  fullRender();
+});
