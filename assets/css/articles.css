@@ -167,7 +167,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  padding: 12px 0 0;
+  padding: 12px 8px 0;
   border-top: 1px solid var(--line-strong);
   margin-top: 28px;
   margin-bottom: 14px;
