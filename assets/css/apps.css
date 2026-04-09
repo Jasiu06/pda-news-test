@@ -60,6 +60,7 @@
 .majority-yes { color: #22c55e; }
 .majority-no { color: var(--red); }
 .majority-error { color: #f59e0b; }
+.majority-super { color: #8b5cf6; }
 
 /* ── SIDEBAR & EDITOR ───────────────────────────── */
 .topic-sidebar {
