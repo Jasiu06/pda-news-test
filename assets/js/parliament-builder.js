@@ -39,15 +39,15 @@ function updateChart() {
   const r0 = 60;  
   const r1 = 180; 
 
-  if (chartTotal > 0) {
-    const renderParties = [];
-    parties.forEach((p, idx) => { if (p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
-    parties.forEach((p, idx) => { if (!p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
-    
-    if (unassignedSeats > 0) {
-      renderParties.push({ party: { name: "Unassigned", seats: unassignedSeats, color: "rgba(255,255,255,0.15)" }, originalIndex: -1 });
-    }
+  const renderParties = [];
+  parties.forEach((p, idx) => { if (p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
+  parties.forEach((p, idx) => { if (!p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
+  
+  if (unassignedSeats > 0) {
+    renderParties.push({ party: { name: "Unassigned", seats: unassignedSeats, color: "rgba(255,255,255,0.15)" }, originalIndex: -1 });
+  }
 
+  if (chartTotal > 0) {
     let rows = Math.max(3, Math.ceil(Math.sqrt(chartTotal / 3)));
     if (chartTotal > 800) rows = Math.ceil(Math.sqrt(chartTotal / 4)); 
     
@@ -190,15 +190,34 @@ function updateChart() {
   let statusClass = assignedSeats > maxSeats ? "majority-error" : (hasSuperMajority ? "majority-super" : (hasMajority ? "majority-yes" : "majority-no"));
   let neededText = hasSuperMajority ? `${superMajorityNeeded} needed` : `${majorityNeeded} needed`;
 
+  // GENEROWANIE OSI PARLAMENTU
+  let axisHtml = `<div class="status-axis"><div class="status-axis-inner">`;
+  renderParties.forEach(item => {
+    const p = item.party;
+    const pSeats = parseInt(p.seats || 0);
+    if (pSeats > 0) {
+      let pct = (pSeats / maxSeats) * 100;
+      axisHtml += `<div class="status-axis-segment" style="width: ${pct}%; background-color: ${p.color};" title="${p.name} (${p.seats})"></div>`;
+    }
+  });
+  axisHtml += `</div>
+    <div class="axis-marker majority-marker" style="left: ${(majorityNeeded / maxSeats) * 100}%;"></div>
+    <div class="axis-marker supermajority-marker" style="left: ${(superMajorityNeeded / maxSeats) * 100}%;"></div>
+  </div>`;
+
   const statusPanel = document.getElementById('status-panel');
   if (statusPanel) {
     statusPanel.innerHTML = `
-      <div class="status-stat"><span class="status-label">Gov. Seats</span><span class="status-value">${govSeats}</span></div>
-      <div class="status-stat" style="text-align: right;">
-        <span class="status-label">Status</span>
-        <span class="status-majority-text ${statusClass}">${maxSeats === 0 ? 'NO DATA' : statusText}</span>
-        <span style="font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--muted);">${neededText}</span>
-      </div>`;
+      <div class="status-panel-top">
+        <div class="status-stat"><span class="status-label">Gov. Seats</span><span class="status-value">${govSeats}</span></div>
+        <div class="status-stat" style="text-align: right;">
+          <span class="status-label">Status</span>
+          <span class="status-majority-text ${statusClass}">${maxSeats === 0 ? 'NO DATA' : statusText}</span>
+          <span style="font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--muted);">${neededText}</span>
+        </div>
+      </div>
+      ${axisHtml}
+    `;
   }
 }
 
@@ -256,7 +275,6 @@ function attachEditorListeners() {
     });
   });
 
-  // Obsługa przycisku MINUS
   document.querySelectorAll('.minus-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const pIndex = parseInt(e.target.dataset.index);
@@ -269,7 +287,6 @@ function attachEditorListeners() {
     });
   });
 
-  // Obsługa przycisku PLUS
   document.querySelectorAll('.plus-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const pIndex = parseInt(e.target.dataset.index);
@@ -289,7 +306,6 @@ function attachEditorListeners() {
     });
   });
 
-  // Ręczne wpisywanie wartości z klawiatury
   document.querySelectorAll('.party-seats').forEach(input => {
     input.addEventListener('focus', function() { this.select(); });
 
