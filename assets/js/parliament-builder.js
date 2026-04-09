@@ -190,14 +190,12 @@ function updateChart() {
   let statusClass = assignedSeats > maxSeats ? "majority-error" : (hasSuperMajority ? "majority-super" : (hasMajority ? "majority-yes" : "majority-no"));
   let neededText = hasSuperMajority ? `${superMajorityNeeded} needed` : `${majorityNeeded} needed`;
 
-  // GENEROWANIE OSI PARLAMENTU - Z OPACITY DLA KOALICJI
   let axisHtml = `<div class="status-axis"><div class="status-axis-inner">`;
   renderParties.forEach(item => {
     const p = item.party;
     const pSeats = parseInt(p.seats || 0);
     if (pSeats > 0) {
       let pct = (pSeats / maxSeats) * 100;
-      // Ustawienie przezroczystości w zależności od tego, czy partia jest zaznaczona do rządu
       let opacity = (p.name !== "Unassigned" && p.inCoalition) ? '1' : '0.25';
       axisHtml += `<div class="status-axis-segment" style="width: ${pct}%; background-color: ${p.color}; opacity: ${opacity};" title="${p.name} (${p.seats})"></div>`;
     }
