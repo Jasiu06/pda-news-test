@@ -39,13 +39,13 @@
 <nav class="nav-strip">
   <div class="container nav-inner">
     <a href="index.html" class="nav-item active">Today</a>
-    <a href="politics.html" class="nav-item">Politics</a>
-    <a href="economy.html" class="nav-item">Economy</a>
-    <a href="lagos.html" class="nav-item">Lagos</a>
-    <a href="world.html" class="nav-item">World</a>
-    <a href="tech.html" class="nav-item">Tech</a>
-    <a href="culture.html" class="nav-item">Culture</a>
-    <a href="sport.html" class="nav-item">Sport</a>
+    <a href="politics-democracy-begins.html" class="nav-item">Politics</a>
+    <a href="index.html" class="nav-item">Economy</a>
+    <a href="index.html" class="nav-item">Lagos</a>
+    <a href="index.html" class="nav-item">World</a>
+    <a href="index.html" class="nav-item">Tech</a>
+    <a href="index.html" class="nav-item">Culture</a>
+    <a href="index.html" class="nav-item">Sport</a>
   </div>
 </nav>
 
@@ -70,7 +70,7 @@
       <div class="headliner-meta">
         <span class="headliner-meta-author">Abraham Mutfwang</span>
         <span>·</span>
-        <span>1 hr ago</span>
+        <span data-datetime="2026-04-08T09:00:00Z">1 hr ago</span>
         <span>·</span>
         <span>5 min read</span>
       </div>
@@ -96,7 +96,7 @@
         <span class="card-cat">Culture</span>
       </div>
       <p class="card-hl">City museum opens in New Makoko on 10th anniversary of foundation</p>
-      <span class="card-time">2 hrs ago</span>
+      <span class="card-time" data-datetime="2026-04-08T08:00:00Z">2 hrs ago</span>
     </a>
 
     <a href="water-tests.html" class="card article-link">
@@ -105,7 +105,7 @@
         <span class="card-cat">Tech</span>
       </div>
       <p class="card-hl">New Makoko water tests pass with flying colours</p>
-      <span class="card-time">5 hrs ago</span>
+      <span class="card-time" data-datetime="2026-04-08T05:00:00Z">5 hrs ago</span>
     </a>
 
     <a href="build-your-own-parliament.html" class="card article-link">
@@ -114,7 +114,7 @@
         <span class="card-cat">Politics</span>
       </div>
       <p class="card-hl">Can you build a governing coalition?</p>
-      <span class="card-time">8 hrs ago</span>
+      <span class="card-time" data-datetime="2026-04-08T02:00:00Z">8 hrs ago</span>
     </a>
 
     <a href="pallas-cat.html" class="card article-link">
@@ -123,7 +123,7 @@
         <span class="card-cat">Culture</span>
       </div>
       <p class="card-hl">Lagos zoo welcomes new Pallas cat</p>
-      <span class="card-time">10 hrs ago</span>
+      <span class="card-time" data-datetime="2026-04-08T00:00:00Z">10 hrs ago</span>
     </a>
   </div>
 
@@ -154,7 +154,7 @@
       <div class="list-content">
         <div class="list-cat">Politics</div>
         <div class="list-hl">Progressive parties create joint parliamentary group</div>
-        <div class="list-meta">4 hours ago</div>
+        <div class="list-meta" data-datetime="2026-04-08T06:00:00Z">4 hours ago</div>
       </div>
     </a>
     <a href="friln-chairman.html" class="list-article article-link">
@@ -162,7 +162,7 @@
       <div class="list-content">
         <div class="list-cat">Politics</div>
         <div class="list-hl">FRILN chairman reportedly unaware of appointment as deputy speaker, asks "what is a deputy speaker" in the National Assembly</div>
-        <div class="list-meta">5 hours ago</div>
+        <div class="list-meta" data-datetime="2026-04-08T05:00:00Z">5 hours ago</div>
       </div>
     </a>
     <a href="lagos-accident.html" class="list-article article-link">
@@ -170,7 +170,7 @@
       <div class="list-content">
         <div class="list-cat">Lagos</div>
         <div class="list-hl">Yet another accident at the main junction to Lagos</div>
-        <div class="list-meta">Yesterday</div>
+        <div class="list-meta" data-datetime="2026-04-07T10:00:00Z">Yesterday</div>
       </div>
     </a>
     <a href="makoko-rents.html" class="list-article article-link">
@@ -178,7 +178,7 @@
       <div class="list-content">
         <div class="list-cat">Economy</div>
         <div class="list-hl">New Makoko apartment rents hit record high for third straight quarter</div>
-        <div class="list-meta">1 hr ago</div>
+        <div class="list-meta" data-datetime="2026-04-08T09:00:00Z">1 hr ago</div>
       </div>
     </a>
     <a href="cassava-blight.html" class="list-article article-link">
@@ -186,7 +186,7 @@
       <div class="list-content">
         <div class="list-cat">Tech</div>
         <div class="list-hl">Researchers at University of Nigeria announce breakthrough in cassava blight resistance</div>
-        <div class="list-meta">2 hrs ago</div>
+        <div class="list-meta" data-datetime="2026-04-08T08:00:00Z">2 hrs ago</div>
       </div>
     </a>
   </div>
@@ -315,5 +315,7 @@ nav.addEventListener('mousemove', e => {
 });
 </script>
 
+    <script src="assets/js/news-metadata.js"></script>
+    <script src="assets/js/relative-time.js"></script>
 </body>
 </html>
