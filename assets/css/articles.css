@@ -46,10 +46,10 @@
 
 .header-image-container { margin-top: 16px; }
 
-.title-only .article-header .header-image-container { display: none; }
+.title-only .header-image-container { display: none; }
 
 @media (min-width: 768px) {
-    .title-only .article-header {
+    .title-only {
         grid-template-columns: 1fr 0fr !important;
     }
 }
