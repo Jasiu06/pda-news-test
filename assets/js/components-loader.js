@@ -3,11 +3,16 @@ function getRootPath() {
     // Look for the script tag that loaded this file
     const script = document.querySelector('script[src*="components-loader.js"]');
     if (script) {
-        const src = script.getAttribute('src');
-        // If src is "assets/js/components-loader.js", root is ""
-        // If src is "../assets/js/components-loader.js", root is "../"
-        return src.replace('assets/js/components-loader.js', '');
+        // Use .src to get the absolute URL, which is more robust
+        const src = script.src;
+        // Find where "assets/js/components-loader.js" begins
+        const target = 'assets/js/components-loader.js';
+        const index = src.indexOf(target);
+        if (index !== -1) {
+            return src.substring(0, index);
+        }
     }
+    // Fallback if script not found or doesn't match
     return '';
 }
 
@@ -16,7 +21,9 @@ async function loadComponent(id, file) {
     if (!el) return;
     try {
         const root = getRootPath();
-        const response = await fetch(root + file);
+        const url = root + file;
+        console.log(`Fetching component: ${url} for element: ${id}`);
+        const response = await fetch(url);
         if (response.ok) {
             let html = await response.text();
             
@@ -29,9 +36,11 @@ async function loadComponent(id, file) {
             
             el.innerHTML = html;
             return true;
+        } else {
+            console.error(`Failed to load component: ${file}. Status: ${response.status} ${response.statusText}`);
         }
     } catch (err) {
-        console.error(`Failed to load component: ${file}`, err);
+        console.error(`Error fetching component: ${file}`, err);
     }
     return false;
 }
