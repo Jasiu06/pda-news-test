@@ -207,6 +207,12 @@ function updateChart() {
             circle.setAttribute('stroke-width', Math.max(1, dotRadius * 0.3));
           } else {
             circle.setAttribute('fill', party.color);
+            if (party.inCoalition) {
+              circle.setAttribute('stroke', 'rgba(255,255,255,0.8)');
+              circle.setAttribute('stroke-width', Math.max(1, dotRadius * 0.25));
+            } else {
+              circle.setAttribute('fill-opacity', '0.25');
+            }
           }
           
           svg.appendChild(circle);
@@ -267,7 +273,7 @@ function renderSidebar() {
 
   parties.forEach((party, index) => {
     const row = document.createElement('div');
-    row.className = 'party-row';
+    row.className = 'party-row' + (party.inCoalition ? ' is-in-coalition' : '');
     row.dataset.index = index;
     row.innerHTML = `
       <div class="party-row-top">
@@ -386,7 +392,11 @@ function attachEditorListeners() {
 
   document.querySelectorAll('.party-coalition').forEach(input => {
     input.addEventListener('change', (e) => {
-      parties[e.target.dataset.index].inCoalition = e.target.checked;
+      const isChecked = e.target.checked;
+      parties[e.target.dataset.index].inCoalition = isChecked;
+      const row = e.target.closest('.party-row');
+      if (isChecked) row.classList.add('is-in-coalition');
+      else row.classList.remove('is-in-coalition');
       updateChart(); 
     });
   });
