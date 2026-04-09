@@ -2,12 +2,6 @@
    INTERACTIVE APP STYLES (Parliament Builder, etc.)
    ========================================================================== */
 
-@media (min-width: 768px) {
-    .article-header {
-        grid-template-columns: 1fr 0fr !important;
-    }
-}
-
 /* ── VIZ MODULE ────────────────────────────────── */
 .viz-module {
   padding: 0;
