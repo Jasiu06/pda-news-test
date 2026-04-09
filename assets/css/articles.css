@@ -46,6 +46,14 @@
 
 .header-image-container { margin-top: 16px; }
 
+.title-only .article-header .header-image-container { display: none; }
+
+@media (min-width: 768px) {
+    .title-only .article-header {
+        grid-template-columns: 1fr 0fr !important;
+    }
+}
+
 .article-main-img {
   width: calc(100% + (var(--padding-x) * 2));
   margin-left: calc(var(--padding-x) * -1);
