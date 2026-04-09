@@ -1,31 +1,23 @@
-/**
- * Parliament Builder - Interactive Application Logic
- * Handles data state, hemicycle rendering, and sidebar interactions.
- */
-
-// Base Application State
 let maxSeats = 624;
 let activeDraggedParty = null;
 
-// Default array with the EXACT requested order and colors
 let parties = [
-  { name: "Salam!", seats: 121, color: "#55e67b", inCoalition: false },
-  { name: "ABPL", seats: 91, color: "#2563eb", inCoalition: true },
-  { name: "Southern Renewal Party", seats: 84, color: "#eab308", inCoalition: false },
-  { name: "Group of the People", seats: 83, color: "#093314", inCoalition: false },
-  { name: "NDF", seats: 56, color: "#08992e", inCoalition: false },
-  { name: "FRILN", seats: 48, color: "#f59e0b", inCoalition: false },
-  { name: "New African Alliance", seats: 36, color: "#3ae0d8", inCoalition: true },
-  { name: "Naija Patriotic Army", seats: 29, color: "#000000", inCoalition: false },
-  { name: "Neo Omu Aro", seats: 12, color: "#450b0b", inCoalition: false },
-  { name: "MOTTAINAI", seats: 15, color: "#22c55e", inCoalition: true },
-  { name: "GLAND", seats: 13, color: "#a054c7", inCoalition: true },
-  { name: "FFA", seats: 21, color: "#e6e285", inCoalition: false },
-  { name: "People's Dem. Alliance", seats: 11, color: "#fc0f0f", inCoalition: true },
-  { name: "ISPN", seats: 4, color: "#d2ffc7", inCoalition: true }
+  { name: "ISPN",                    seats: 4,   color: "#d2ffc7", inCoalition: true },
+  { name: "People's Dem. Alliance",  seats: 11,  color: "#fc0f0f", inCoalition: true },
+  { name: "MOTTAINAI",               seats: 15,  color: "#22c55e", inCoalition: true },
+  { name: "New African Alliance",    seats: 36,  color: "#3ae0d8", inCoalition: true },
+  { name: "GLAND",                   seats: 13,  color: "#a054c7", inCoalition: true },
+  { name: "FRILN",                   seats: 48,  color: "#f59e0b", inCoalition: false },
+  { name: "ABPL",                    seats: 91,  color: "#2563eb", inCoalition: true },
+  { name: "NDF",                     seats: 56,  color: "#08992e", inCoalition: false },
+  { name: "Southern Renewal Party",  seats: 84,  color: "#eab308", inCoalition: false },
+  { name: "Naija Patriotic Army",    seats: 29,  color: "#000000", inCoalition: false },
+  { name: "Salam!",                  seats: 121, color: "#55e67b", inCoalition: false },
+  { name: "Neo Omu Aro",             seats: 12,  color: "#450b0b", inCoalition: false },
+  { name: "FFA",                     seats: 21,  color: "#e6e285", inCoalition: false },
+  { name: "Group of the People",     seats: 83,  color: "#093314", inCoalition: false }
 ];
 
-// Re-renders ONLY the visual chart and status text (protects input cursors)
 function updateChart() {
   const assignedSeats = parties.reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
   const unassignedSeats = Math.max(0, maxSeats - assignedSeats);
@@ -33,9 +25,11 @@ function updateChart() {
   
   const govSeats = parties.filter(p => p.inCoalition).reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
   const majorityNeeded = Math.floor(maxSeats / 2) + 1;
+  const superMajorityNeeded = Math.floor((maxSeats * 2) / 3) + 1;
+  
   const hasMajority = govSeats >= majorityNeeded;
+  const hasSuperMajority = govSeats >= superMajorityNeeded;
 
-  // 1. RENDER SVG HEMICYCLE DOTS
   const svg = document.getElementById('parliament-svg');
   if (!svg) return;
   svg.innerHTML = '';
@@ -45,13 +39,15 @@ function updateChart() {
   const r0 = 60;  
   const r1 = 180; 
 
-  if (chartTotal > 0) {
-    const renderParties = [...parties];
-    
-    if (unassignedSeats > 0) {
-      renderParties.push({ name: "Unassigned", seats: unassignedSeats, color: "rgba(255,255,255,0.15)" });
-    }
+  const renderParties = [];
+  parties.forEach((p, idx) => { if (p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
+  parties.forEach((p, idx) => { if (!p.inCoalition) renderParties.push({ party: p, originalIndex: idx }); });
+  
+  if (unassignedSeats > 0) {
+    renderParties.push({ party: { name: "Unassigned", seats: unassignedSeats, color: "rgba(255,255,255,0.15)" }, originalIndex: -1 });
+  }
 
+  if (chartTotal > 0) {
     let rows = Math.max(3, Math.ceil(Math.sqrt(chartTotal / 3)));
     if (chartTotal > 800) rows = Math.ceil(Math.sqrt(chartTotal / 4)); 
     
@@ -91,8 +87,11 @@ function updateChart() {
     const dotRadius = Math.min(maxDotRadius, (Math.PI * r1) / seatsPerRow[rows-1] / 2 * 0.8);
 
     let dotIndex = 0;
-    renderParties.forEach((party, pIdx) => {
+    renderParties.forEach((item) => {
+      const party = item.party;
+      const pIdx = item.originalIndex;
       const seats = parseInt(party.seats || 0);
+
       for(let i=0; i<seats; i++) {
           if(dotIndex >= positions.length) break;
           const pos = positions[dotIndex];
@@ -109,9 +108,8 @@ function updateChart() {
             circle.style.cursor = "default";
           } else {
             circle.setAttribute('fill', party.color);
-            circle.dataset.partyIndex = pIdx;
+            circle.dataset.partyIndex = pIdx; 
             
-            // If this is the active dragged party, give it a specific cursor
             if (activeDraggedParty === party) {
               circle.style.cursor = 'grabbing';
             } else {
@@ -137,19 +135,13 @@ function updateChart() {
               
               const onMouseMove = (moveEvent) => {
                 if (!activeDraggedParty) return;
-                
                 const currentPIdx = parties.indexOf(activeDraggedParty);
                 const elemBelow = document.elementFromPoint(moveEvent.clientX, moveEvent.clientY);
-                
                 if (elemBelow && elemBelow.tagName === 'circle' && elemBelow.dataset.partyIndex !== undefined) {
                   const targetPIdx = parseInt(elemBelow.dataset.partyIndex);
                   if (targetPIdx !== -1 && targetPIdx !== currentPIdx) {
-                    // Move the party in the array
                     const movedItem = parties.splice(currentPIdx, 1)[0];
                     parties.splice(targetPIdx, 0, movedItem);
-                    
-                    // Don't remove listeners, just re-render. 
-                    // The new dots will pick up the 'activeDraggedParty' state.
                     fullRender();
                   }
                 }
@@ -158,14 +150,10 @@ function updateChart() {
               const onMouseUp = (upEvent) => {
                 const dragDuration = Date.now() - clickStartTime;
                 const dragDist = Math.sqrt(Math.pow(upEvent.clientX - startX, 2) + Math.pow(upEvent.clientY - startY, 2));
-                
                 document.removeEventListener('mousemove', onMouseMove);
                 document.removeEventListener('mouseup', onMouseUp);
-                
                 activeDraggedParty = null;
                 circle.style.cursor = 'grab';
-
-                // If it was a quick click without much movement, toggle coalition
                 if (dragDuration < 250 && dragDist < 5) {
                   party.inCoalition = !party.inCoalition;
                   fullRender();
@@ -176,7 +164,6 @@ function updateChart() {
               document.addEventListener('mouseup', onMouseUp);
             });
           }
-          
           svg.appendChild(circle);
           dotIndex++;
       }
@@ -193,48 +180,47 @@ function updateChart() {
     svg.appendChild(line);
   }
 
-  // 2. RENDER STATUS PANEL
   let counterColor = assignedSeats > maxSeats ? "var(--red)" : "var(--ink)";
   const totalCounter = document.getElementById('total-seat-counter');
   if (totalCounter) {
     totalCounter.innerHTML = `<span style="color:${counterColor}">${assignedSeats}</span> / ${maxSeats} Seats`;
   }
   
-  let statusText = "";
-  let statusClass = "";
-  if (assignedSeats > maxSeats) {
-    statusText = "OVER CAPACITY";
-    statusClass = "majority-error";
-  } else if (hasMajority) {
-    statusText = "MAJORITY";
-    statusClass = "majority-yes";
-  } else {
-    statusText = "MINORITY";
-    statusClass = "majority-no";
-  }
+  let statusText = assignedSeats > maxSeats ? "OVER CAPACITY" : (hasSuperMajority ? "SUPERMAJORITY" : (hasMajority ? "MAJORITY" : "MINORITY"));
+  let statusClass = assignedSeats > maxSeats ? "majority-error" : (hasSuperMajority ? "majority-super" : (hasMajority ? "majority-yes" : "majority-no"));
+  let neededText = hasSuperMajority ? `${superMajorityNeeded} needed` : `${majorityNeeded} needed`;
 
-  const statusHtml = `
-    <div class="status-stat">
-      <span class="status-label">Gov. Seats</span>
-      <span class="status-value">${govSeats}</span>
-    </div>
-    <div class="status-stat" style="text-align: right;">
-      <span class="status-label">Status</span>
-      <span class="status-majority-text ${statusClass}">
-        ${maxSeats === 0 ? 'NO DATA' : statusText}
-      </span>
-      <span style="font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--muted);">
-        ${majorityNeeded} needed
-      </span>
-    </div>
-  `;
+  let axisHtml = `<div class="status-axis"><div class="status-axis-inner">`;
+  renderParties.forEach(item => {
+    const p = item.party;
+    const pSeats = parseInt(p.seats || 0);
+    if (pSeats > 0) {
+      let pct = (pSeats / maxSeats) * 100;
+      let opacity = (p.name !== "Unassigned" && p.inCoalition) ? '1' : '0.25';
+      axisHtml += `<div class="status-axis-segment" style="width: ${pct}%; background-color: ${p.color}; opacity: ${opacity};" title="${p.name} (${p.seats})"></div>`;
+    }
+  });
+  axisHtml += `</div>
+    <div class="axis-marker majority-marker" style="left: ${(majorityNeeded / maxSeats) * 100}%;"></div>
+    <div class="axis-marker supermajority-marker" style="left: ${(superMajorityNeeded / maxSeats) * 100}%;"></div>
+  </div>`;
+
   const statusPanel = document.getElementById('status-panel');
   if (statusPanel) {
-    statusPanel.innerHTML = statusHtml;
+    statusPanel.innerHTML = `
+      <div class="status-panel-top">
+        <div class="status-stat"><span class="status-label">Gov. Seats</span><span class="status-value">${govSeats}</span></div>
+        <div class="status-stat" style="text-align: right;">
+          <span class="status-label">Status</span>
+          <span class="status-majority-text ${statusClass}">${maxSeats === 0 ? 'NO DATA' : statusText}</span>
+          <span style="font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--muted);">${neededText}</span>
+        </div>
+      </div>
+      ${axisHtml}
+    `;
   }
 }
 
-// Rebuilds the DOM Sidebar and attaches listeners (used for structural changes)
 function renderSidebar() {
   const list = document.getElementById('party-editor-list');
   if (!list) return;
@@ -252,9 +238,12 @@ function renderSidebar() {
         <button class="party-remove" data-index="${index}" aria-label="Remove Party">×</button>
       </div>
       <div class="party-row-bottom">
-        <label class="party-seats-wrap">Seats: 
+        <div class="party-seats-controls">
+          <span style="margin-right: 6px;">Seats:</span>
+          <button class="seat-btn minus-btn" data-index="${index}">−</button>
           <input type="text" inputmode="numeric" pattern="[0-9]*" class="party-seats" data-index="${index}" value="${party.seats}">
-        </label>
+          <button class="seat-btn plus-btn" data-index="${index}">+</button>
+        </div>
         <label class="party-coalition-wrap">
           <input type="checkbox" class="party-coalition" data-index="${index}" ${party.inCoalition ? 'checked' : ''}>
           In Government
@@ -272,7 +261,6 @@ function fullRender() {
   updateChart();
 }
 
-// Attach all interactive events
 function attachEditorListeners() {
   document.querySelectorAll('.party-name').forEach(input => {
     input.addEventListener('input', (e) => {
@@ -287,67 +275,60 @@ function attachEditorListeners() {
     });
   });
 
-  document.querySelectorAll('.party-seats').forEach(input => {
-    
-    input.addEventListener('focus', function() {
-       this.select();
+  document.querySelectorAll('.minus-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pIndex = parseInt(e.target.dataset.index);
+      let currentSeats = parseInt(parties[pIndex].seats || 0);
+      if (currentSeats > 0) {
+        parties[pIndex].seats = currentSeats - 1;
+        document.querySelector(`.party-seats[data-index="${pIndex}"]`).value = parties[pIndex].seats;
+        updateChart();
+      }
     });
+  });
 
-    input.addEventListener('keydown', (e) => {
-        if ([46, 8, 9, 27, 13, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
-            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-            (e.keyCode === 67 && (e.ctrlKey === true || e.metaKey === true)) ||
-            (e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) ||
-            (e.keyCode === 88 && (e.ctrlKey === true || e.metaKey === true)) ||
-            (e.keyCode >= 35 && e.keyCode <= 39)) {
-                 return;
-        }
-        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-            e.preventDefault();
-        }
+  document.querySelectorAll('.plus-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pIndex = parseInt(e.target.dataset.index);
+      let currentSeats = parseInt(parties[pIndex].seats || 0);
+      
+      let otherSeatsTotal = 0;
+      parties.forEach((p, idx) => {
+        if (idx !== pIndex) otherSeatsTotal += parseInt(p.seats || 0);
+      });
+      const maxAllowed = maxSeats - otherSeatsTotal;
+
+      if (currentSeats < maxAllowed) {
+        parties[pIndex].seats = currentSeats + 1;
+        document.querySelector(`.party-seats[data-index="${pIndex}"]`).value = parties[pIndex].seats;
+        updateChart();
+      }
     });
+  });
+
+  document.querySelectorAll('.party-seats').forEach(input => {
+    input.addEventListener('focus', function() { this.select(); });
 
     input.addEventListener('input', (e) => {
       const pIndex = parseInt(e.target.dataset.index);
-      
       let rawVal = e.target.value.replace(/\D/g, ''); 
-      let cursorPosition = e.target.selectionStart;
       
       if (rawVal === "") {
-        e.target.value = "";
         parties[pIndex].seats = 0;
         updateChart();
         return;
       }
 
       let newSeats = parseInt(rawVal, 10);
-
       let otherSeatsTotal = 0;
       parties.forEach((p, idx) => {
         if (idx !== pIndex) otherSeatsTotal += parseInt(p.seats || 0);
       });
 
       const maxAllowed = maxSeats - otherSeatsTotal;
-      let clamped = false;
-      if (newSeats > maxAllowed) {
-        newSeats = maxAllowed;
-        clamped = true;
-      }
+      if (newSeats > maxAllowed) newSeats = maxAllowed;
       
-      let newValString = newSeats.toString();
-
-      if (e.target.value !== newValString) {
-        e.target.value = newValString;
-        
-        if (clamped) {
-          e.target.setSelectionRange(newValString.length, newValString.length);
-        } else {
-          let offset = rawVal.length - newValString.length;
-          let newCursor = Math.max(0, cursorPosition - offset);
-          e.target.setSelectionRange(newCursor, newCursor);
-        }
-      }
-
+      e.target.value = newSeats; 
       parties[pIndex].seats = newSeats;
       updateChart();
     });
@@ -424,74 +405,14 @@ function attachEditorListeners() {
   });
 }
 
-// Global UI Listeners (Max Seats and Add Button)
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeatsInput = document.getElementById('input-max-seats');
   const addPartyBtn = document.getElementById('btn-add-party');
+  const unselectAllBtn = document.getElementById('btn-unselect-all');
 
   if (maxSeatsInput) {
-    maxSeatsInput.addEventListener('focus', function() {
-       this.select();
-    });
-
-    maxSeatsInput.addEventListener('keydown', (e) => {
-      if ([46, 8, 9, 27, 13, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
-          (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-          (e.keyCode === 67 && (e.ctrlKey === true || e.metaKey === true)) ||
-          (e.keyCode === 86 && (e.ctrlKey === true || e.metaKey === true)) ||
-          (e.keyCode === 88 && (e.ctrlKey === true || e.metaKey === true)) ||
-          (e.keyCode >= 35 && e.keyCode <= 39)) {
-               return;
-      }
-      if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-          e.preventDefault();
-      }
-    });
-
-    maxSeatsInput.addEventListener('input', (e) => {
-      let rawVal = e.target.value.replace(/\D/g, '');
-      let cursorPosition = e.target.selectionStart;
-
-      if (rawVal === "") {
-        e.target.value = "";
-        return; 
-      }
-
-      let newMax = parseInt(rawVal, 10);
-      if (newMax < 1) newMax = 1;
-
-      const assignedSeats = parties.reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
-      let clamped = false;
-      
-      if (newMax < assignedSeats) {
-        newMax = assignedSeats;
-        clamped = true;
-      }
-
-      let newValString = newMax.toString();
-      if (e.target.value !== newValString) {
-        e.target.value = newValString;
-        if(clamped){
-          e.target.setSelectionRange(newValString.length, newValString.length);
-        } else {
-          let offset = rawVal.length - newValString.length;
-          let newCursor = Math.max(0, cursorPosition - offset);
-          e.target.setSelectionRange(newCursor, newCursor);
-        }
-      }
-
-      maxSeats = newMax;
-      updateChart();
-    });
-
-    maxSeatsInput.addEventListener('blur', (e) => {
-      if (e.target.value === "") {
-         const assignedSeats = parties.reduce((sum, p) => sum + parseInt(p.seats || 0), 0);
-         maxSeats = Math.max(1, assignedSeats);
-         e.target.value = maxSeats;
-         updateChart();
-      }
-    });
+    maxSeatsInput.value = maxSeats;
+    maxSeatsInput.disabled = true; 
   }
 
   if (addPartyBtn) {
@@ -505,6 +426,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Initial Render
+  // LOGIC FOR UNSELECT ALL
+  if (unselectAllBtn) {
+    unselectAllBtn.addEventListener('click', () => {
+      parties.forEach(p => p.inCoalition = false);
+      fullRender();
+    });
+  }
+
   fullRender();
 });
