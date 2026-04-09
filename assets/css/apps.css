@@ -59,8 +59,8 @@
 
 .majority-yes { color: #22c55e; }
 .majority-no { color: var(--red); }
-.majority-error { color: #f59e0b; }
 .majority-super { color: #8b5cf6; }
+.majority-error { color: #f59e0b; }
 
 /* ── SIDEBAR & EDITOR ───────────────────────────── */
 .topic-sidebar {
@@ -224,26 +224,53 @@
   text-transform: uppercase;
 }
 
-.party-seats-wrap { display: flex; align-items: center; gap: 6px; }
+/* Nowy design dla inputu liczby miejsc z - / + */
+.party-seats-controls {
+  display: flex;
+  align-items: center;
+}
 
-.party-seats {
-  width: 50px;
-  background: var(--bg);
+.seat-btn {
+  width: 22px;
+  height: 22px;
+  background: var(--bg-panel);
   border: 1px solid var(--line-strong);
   color: var(--ink);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  padding: 4px 4px 4px 8px;
-  text-align: right; 
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  padding: 0;
   outline: none;
 }
 
-.party-seats:focus { border-color: var(--accent); }
+.seat-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
-.party-seats::-webkit-inner-spin-button,
-.party-seats::-webkit-outer-spin-button {
-  opacity: 1;
-  display: block;
+.party-seats {
+  width: 38px;
+  background: var(--bg);
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+  border-left: none;
+  border-right: none;
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  padding: 2px 0;
+  text-align: center; 
+  outline: none;
+  border-radius: 0;
+}
+
+.party-seats:focus {
+  border-top-color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
 .party-coalition-wrap { display: flex; align-items: center; gap: 6px; cursor: pointer; }
