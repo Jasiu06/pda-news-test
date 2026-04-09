@@ -13,10 +13,13 @@ const aqiData = [
 
 function initAQITicker() {
   const scroll = document.getElementById('aqiScroll');
-  if (!scroll) return;
+  if (!scroll) {
+      console.warn("aqiScroll element not found");
+      return;
+  }
 
   let html = '';
-  // Repeat 4 times for smooth infinite loop
+  // Repeat for smooth infinite loop
   for (let i = 0; i < 4; i++) {
     aqiData.forEach(d => {
       html += `<span class="aqi-item">
@@ -53,3 +56,10 @@ window.initAQI = function() {
     initAQITicker();
     initAQIPanel();
 };
+
+// Also try to init on load just in case it's already in the DOM
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('aqiScroll')) {
+        window.initAQI();
+    }
+});
