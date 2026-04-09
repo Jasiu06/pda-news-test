@@ -150,7 +150,6 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  margin-bottom: 16px;
 }
 
 .fw-list__dot {
@@ -371,7 +370,6 @@
     font-size: 64px;
     line-height: 1.05;
     letter-spacing: -0.02em;
-    margin-bottom: 24px;
   }
   .article-deck {
     font-size: 20px;
