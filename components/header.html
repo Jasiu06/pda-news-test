@@ -21,15 +21,26 @@
 </header>
 
 <nav class="nav-strip">
-  <div class="container nav-inner">
-    <a href="index.html" class="nav-item" data-nav="index">Today</a>
-    <a href="politics-democracy-begins.html" class="nav-item" data-nav="politics">Politics</a>
-    <a href="index.html" class="nav-item" data-nav="economy">Economy</a>
-    <a href="index.html" class="nav-item" data-nav="lagos">Lagos</a>
-    <a href="index.html" class="nav-item" data-nav="world">World</a>
-    <a href="index.html" class="nav-item" data-nav="tech">Tech</a>
-    <a href="index.html" class="nav-item" data-nav="culture">Culture</a>
-    <a href="index.html" class="nav-item" data-nav="sport">Sport</a>
+  <div class="container nav-container-flex">
+    <div class="nav-links-scroll">
+      <div class="nav-links-inner">
+        <a href="index.html" class="nav-item" data-nav="index">Today</a>
+        <a href="category.html?topic=Politics" class="nav-item" data-nav="politics">Politics</a>
+        <a href="category.html?topic=Economy" class="nav-item" data-nav="economy">Economy</a>
+        <a href="category.html?topic=Lagos" class="nav-item" data-nav="lagos">Lagos</a>
+        <a href="category.html?topic=World" class="nav-item" data-nav="world">World</a>
+        <a href="category.html?topic=Tech" class="nav-item" data-nav="tech">Tech</a>
+        <a href="category.html?topic=Culture" class="nav-item" data-nav="culture">Culture</a>
+        <a href="category.html?topic=Sport" class="nav-item" data-nav="sport">Sport</a>
+      </div>
+    </div>
+    
+    <div class="nav-search">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="SEARCH..." aria-label="Search" autocomplete="off">
+        <div id="searchResults" class="search-results-overlay"></div>
+      </div>
+    </div>
   </div>
 </nav>
 
