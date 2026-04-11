@@ -2,13 +2,46 @@
  * Centralized Article Database
  * Used to populate index cards, related stories, and dynamic metadata.
  */
+/**
+ * Section Configuration
+ * Allows hard-coding specific articles as "Cover Stories" for categories.
+ * If a category isn't listed here, it defaults to the latest article.
+ */
+const SECTION_CONFIG = {
+  "index": { featuredId: "chad-pda-vs-chud-gop" }, // Homepage cover
+  "Politics": { featuredId: "progressive-bloc" },
+  "Lagos": { featuredId: "pallas-cat" }
+};
+
 const ARTICLES = [
+  {
+    id: "ispn-disappearance",
+    title: "The strange disappearance of ISPN politicians and their equally strange return",
+    deck: "Four representatives of the Islamic Socialist Party of Nigeria (ISPN) elected to the National Assembly have, for unknown reasons, not appeared at recent plenary sessions.",
+    category: "Politics",
+    tags: ["Politics", "Progressive", "National Assembly", "ISPN", "Opposition", "Democracy"],
+    author: "Hadiza Usaini",
+    date: "2026-04-08T13:00:00Z",
+    url: "ispn.html",
+    img: "assets/img/ispn.webp"
+  },
+  {
+    id: "chad-pda-vs-chud-gop",
+    title: "Committee Backs Ma for Chancellorship Despite GOP Disruptions",
+    deck: "Despite a barrage of bigoted and unparliamentary attacks from the Group of the People, Usman Ma of the PDA outlined a unifying, forward-thinking economic agenda during his confirmation hearing.",
+    category: "Politics",
+    tags: ["Usman Ma", "PDA", "GOP", "Progressive", "National Assembly", "Domestic Economy"],
+    author: "Jideofor Chidea",
+    date: "2026-04-08T11:00:00Z",
+    url: "chad-pda-vs-chud-gop.html",
+    img: "assets/img/Chad-PDA.webp"
+  },
   {
     id: "democracy-begins",
     title: "Nigerian democracy begins amidst fierce debate and chaos",
     deck: "The first day of the National Assembly has been filled with both excitement and chaos, from fierce disputes over constitutional amendments to shocking accusations during the judiciary hearing.",
     category: "Politics",
-    tags: ["National Assembly", "Constitution", "Democracy", "Politics"],
+    tags: ["National Assembly", "Constitution", "Democracy", "Politics", "Judiciary", "Parliament", "Progressive", "Opposition", "Elections"],
     author: "Abraham Mutfwang",
     date: "2026-04-08T09:00:00Z",
     url: "politics-democracy-begins.html",
@@ -52,7 +85,7 @@ const ARTICLES = [
     title: "Progressive parties create joint parliamentary group",
     deck: "Following a fractured election, a new progressive bloc consolidates its platform, publishing its defining 'Points of Unity' exclusively in Forward!",
     category: "Politics",
-    tags: ["Coalition", "Progressive", "Unity", "Politics"],
+    tags: ["Coalition", "Progressive", "Unity", "Politics", "Manifesto", "NPC", "Ecological", "Participatory Democracy"],
     author: "Hadiza Usaini",
     date: "2026-04-08T06:00:00Z",
     url: "progressive-parties-group.html",
@@ -96,7 +129,7 @@ const ARTICLES = [
     id: "pallas-cat",
     title: "Lagos zoo welcomes new Pallas cat",
     deck: "Conservationists celebrate the arrival of the rare feline as part of an international breeding program in Lagos.",
-    category: "Culture",
+    category: "Lagos",
     tags: ["Wildlife", "Conservation", "Zoo", "Lagos", "Culture"],
     author: "Forward! Staff",
     date: "2026-04-08T00:00:00Z",
@@ -181,17 +214,6 @@ const ARTICLES = [
     date: "2026-04-06T18:00:00Z",
     url: "super-eagles-qualify.html",
     img: "assets/img/national-assembly.webp"
-  },
-  {
-    id: "cbdn-rollout",
-    title: "Central Bank Digital Naira 2.0 Rollout",
-    deck: "The next phase of the digital currency promises faster transactions and lower fees across the ECOWAS region.",
-    category: "Economy",
-    tags: ["Fintech", "Abuja", "Currency", "Economy"],
-    author: "Abraham Mutfwang",
-    date: "2026-04-06T12:00:00Z",
-    url: "cbdn-rollout.html",
-    img: "assets/img/government-builder.webp"
   },
   {
     id: "global-climate-accord",

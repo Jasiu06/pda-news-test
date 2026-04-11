@@ -19,6 +19,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/css/style.css">
+<script src="assets/js/aqi-data.js?v=3" defer></script>
+<script src="assets/js/aqi-ticker.js?v=3" defer></script>
+<script src="assets/js/article-data.js" defer></script>
+<script src="assets/js/components-loader.js" defer></script>
 </head>
 <body data-nav="index">
 
@@ -26,21 +30,16 @@
 
 <main class="container site-main">
   
-  <a href="politics-democracy-begins.html" class="headliner article-link">
+  <a href="#" class="headliner article-link loading" id="indexHeadliner">
     <div class="headliner-img-placeholder">
-      <img src="assets/img/national-assembly.webp" alt="Outside of the National Assembly">
       <span class="headliner-label">Cover Story</span>
     </div>
     <div class="headliner-body">
-      <div class="headliner-kicker">POLITICS · NATIONAL ASSEMBLY</div>
-      <h1 class="headliner-headline">Nigerian democracy begins amidst fierce debate and chaos</h1>
-      <p class="headliner-deck">The first day of the National Assembly has been filled with both excitement and chaos, from fierce disputes over constitutional amendments to shocking accusations during the judiciary hearing.</p>
+      <div class="headliner-kicker">...</div>
+      <h1 class="headliner-headline">Loading Cover Story...</h1>
+      <p class="headliner-deck"></p>
       <div class="headliner-meta">
-        <span class="headliner-meta-author">Abraham Mutfwang</span>
-        <span>·</span>
-        <span data-datetime="2026-04-08T09:00:00Z">1 hr ago</span>
-        <span>·</span>
-        <span>5 min read</span>
+        <span class="headliner-meta-author"></span>
       </div>
     </div>
   </a>
@@ -57,7 +56,7 @@
     <span class="section-label-more">See All →</span>
   </div>
 
-  <div class="card-grid">
+  <div class="card-grid" id="indexTopStories">
     <a href="makoko-museum.html" class="card article-link">
       <div class="card-thumb">
         <img src="assets/img/makoko-museum.webp" alt="City Museum">
@@ -117,57 +116,14 @@
   </div>
 
   <div id="latestList">
-    <a href="progressive-parties-group.html" class="list-article article-link">
-      <span class="list-num">1</span>
-      <div class="list-content">
-        <div class="list-cat">Politics</div>
-        <div class="list-hl">Progressive parties create joint parliamentary group</div>
-        <div class="list-meta" data-datetime="2026-04-08T06:00:00Z">4 hours ago</div>
-      </div>
-    </a>
-    <a href="friln-chairman.html" class="list-article article-link">
-      <span class="list-num">2</span>
-      <div class="list-content">
-        <div class="list-cat">Politics</div>
-        <div class="list-hl">FRILN chairman reportedly unaware of appointment as deputy speaker, asks "what is a deputy speaker" in the National Assembly</div>
-        <div class="list-meta" data-datetime="2026-04-08T05:00:00Z">5 hours ago</div>
-      </div>
-    </a>
-    <a href="lagos-accident.html" class="list-article article-link">
-      <span class="list-num">3</span>
-      <div class="list-content">
-        <div class="list-cat">Lagos</div>
-        <div class="list-hl">Yet another accident at the main junction to Lagos</div>
-        <div class="list-meta" data-datetime="2026-04-07T10:00:00Z">Yesterday</div>
-      </div>
-    </a>
-    <a href="makoko-rents.html" class="list-article article-link">
-      <span class="list-num">4</span>
-      <div class="list-content">
-        <div class="list-cat">Economy</div>
-        <div class="list-hl">New Makoko apartment rents hit record high for third straight quarter</div>
-        <div class="list-meta" data-datetime="2026-04-08T09:00:00Z">1 hr ago</div>
-      </div>
-    </a>
-    <a href="cassava-blight.html" class="list-article article-link">
-      <span class="list-num">5</span>
-      <div class="list-content">
-        <div class="list-cat">Tech</div>
-        <div class="list-hl">Researchers at University of Nigeria announce breakthrough in cassava blight resistance</div>
-        <div class="list-meta" data-datetime="2026-04-08T08:00:00Z">2 hrs ago</div>
-      </div>
-    </a>
+    <!-- Will be populated by JS -->
   </div>
 
 </main>
 
 <div id="footer-placeholder"></div>
 
-    <script src="assets/js/aqi-data.js"></script>
-    <script src="assets/js/aqi-ticker.js"></script>
-    <script src="assets/js/article-data.js"></script>
     <script src="assets/js/breaking-news.js"></script>
     <script src="assets/js/relative-time.js"></script>
-    <script src="assets/js/components-loader.js"></script>
 </body>
 </html>

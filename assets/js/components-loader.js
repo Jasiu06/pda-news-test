@@ -131,7 +131,15 @@ function populateCategoryPage() {
     if (!topic || !document.getElementById('categoryTitle')) return;
 
     const root = getRootPath();
-    document.getElementById('categoryTitle').textContent = topic;
+    const titleEl = document.getElementById('categoryTitle');
+    const descEl = document.getElementById('categoryDescription');
+    
+    titleEl.textContent = topic;
+    titleEl.classList.add('fade-in');
+    if (descEl) {
+        descEl.textContent = `The latest news, analysis, and reports from ${topic}.`;
+        descEl.classList.add('fade-in');
+    }
     document.title = `${topic} News — Forward!`;
 
     // Filter by Category OR Tag
@@ -266,8 +274,6 @@ function initSearch() {
 }
 
 function initInjectedScripts() {
-    if (typeof window.initAQI === 'function') window.initAQI();
-
     const nav = document.querySelector('.nav-links-scroll');
     if (nav) {
         let isDown = false, startX, scrollLeft;
@@ -293,11 +299,114 @@ function initInjectedScripts() {
     initSearch();
     populateRelatedStories();
     populateCategoryPage();
+
+    if (typeof window.initAQI === 'function') window.initAQI();
+}
+
+function loadHead() {
+    const root = getRootPath();
+    const faviconUrl = root + 'assets/img/pda-logo.webp';
+    
+    // Modern standard for favicons
+    let link = document.querySelector("link[rel='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/webp';
+        document.head.prepend(link); // Put it at the top of the head
+    }
+    link.href = faviconUrl;
+}
+
+// Immediately inject head elements (like favicon) before DOMContentLoaded
+loadHead();
+
+function populateIndex() {
+    if (document.body.getAttribute('data-nav') !== 'index' || typeof ARTICLES === 'undefined') return;
+
+    const root = getRootPath();
+
+    // Determine Headliner (Config override OR latest)
+    let headlinerArt = ARTICLES[0];
+    const config = typeof SECTION_CONFIG !== 'undefined' ? SECTION_CONFIG['index'] : null;
+    if (config && config.featuredId) {
+        const found = ARTICLES.find(a => a.id === config.featuredId);
+        if (found) headlinerArt = found;
+    }
+
+    // 1. Headliner
+    const headliner = document.getElementById('indexHeadliner');
+    if (headliner && ARTICLES.length > 0) {
+        const art = headlinerArt;
+        const fullUrl = art.url.startsWith('http') ? art.url : root + art.url;
+        headliner.href = fullUrl;
+        headliner.classList.remove('loading');
+        headliner.classList.add('fade-in');
+        headliner.innerHTML = `
+            <div class="headliner-img-placeholder">
+                ${getResponsiveImg(art.img, art.title, "", art.imgStyle)}
+                <span class="headliner-label">Cover Story</span>
+            </div>
+            <div class="headliner-body">
+                <div class="headliner-kicker">${art.category.toUpperCase()}</div>
+                <h1 class="headliner-headline">${art.title}</h1>
+                <p class="headliner-deck">${art.deck || ""}</p>
+                <div class="headliner-meta">
+                    <span class="headliner-meta-author">${art.author}</span>
+                    <span>·</span>
+                    <span data-datetime="${art.date}"></span>
+                </div>
+            </div>
+        `;
+    }
+
+    // Pool for top stories and latest (excludes headliner)
+    const otherArticles = ARTICLES.filter(a => a.id !== headlinerArt.id);
+
+    // 2. Top Stories (Next 4)
+    const topStories = document.getElementById('indexTopStories');
+    if (topStories && otherArticles.length > 0) {
+        const stories = otherArticles.slice(0, 4);
+        topStories.innerHTML = stories.map(art => {
+            const fullUrl = art.url.startsWith('http') ? art.url : root + art.url;
+            return `
+                <a href="${fullUrl}" class="card article-link">
+                    <div class="card-thumb">
+                        ${getResponsiveImg(art.img, art.title, "", art.imgStyle)}
+                        <span class="card-cat">${art.category}</span>
+                    </div>
+                    <p class="card-hl">${art.title}</p>
+                    <span class="card-time" data-datetime="${art.date}"></span>
+                </a>
+            `;
+        }).join('');
+    }
+
+    // 3. Latest List (Following 5)
+    const latestList = document.getElementById('latestList');
+    if (latestList && otherArticles.length > 4) {
+        const stories = otherArticles.slice(4, 9);
+        latestList.innerHTML = stories.map((art, index) => {
+            const fullUrl = art.url.startsWith('http') ? art.url : root + art.url;
+            return `
+                <a href="${fullUrl}" class="list-article article-link">
+                    <span class="list-num">${index + 1}</span>
+                    <div class="list-content">
+                        <div class="list-cat">${art.category}</div>
+                        <div class="list-hl">${art.title}</div>
+                        <div class="list-meta" data-datetime="${art.date}"></div>
+                    </div>
+                </a>
+            `;
+        }).join('');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    loadHead();
     await loadComponent('header-placeholder', 'components/header.html');
     await loadComponent('footer-placeholder', 'components/footer.html');
     setActiveNav();
+    populateIndex();
     initInjectedScripts();
 });
