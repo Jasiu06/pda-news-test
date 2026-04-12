@@ -975,7 +975,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
   border-top: 2px solid var(--red);
-  margin-top: 3rem;
+  margin-top: 20px;
 }
 
 .prefooter-box {
