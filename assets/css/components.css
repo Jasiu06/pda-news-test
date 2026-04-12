@@ -1007,7 +1007,7 @@
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.25;
-  color: var(--accent);
+  color: var(--ink);
   margin: 0;
 }
 
@@ -1026,7 +1026,7 @@
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: var(--accent);
+  color: var(--ink);
   text-decoration: none;
   margin-top: auto;
   transition: opacity 0.15s;
