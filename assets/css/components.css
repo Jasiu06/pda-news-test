@@ -967,3 +967,198 @@
     grid-template-columns: repeat(4, 1fr); 
   }
 }
+
+/* ===================================
+   PRE-FOOTER BOXES
+   =================================== */
+
+.prefooter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  border-top: 3px solid var(--color-accent, #e8000d);
+  margin-top: 3rem;
+}
+
+.prefooter-box {
+  padding: 2rem 1.75rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--color-bg, #111);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.prefooter-box:last-child {
+  border-right: none;
+}
+
+/* Tag line (like .card-cat / .opinion-tag) */
+.prefooter-box__tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent, #e8000d);
+}
+
+/* Heading */
+.prefooter-box__heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-text, #f0ece3);
+  margin: 0;
+}
+
+/* Body text */
+.prefooter-box__body {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--color-text-muted, #999);
+  margin: 0;
+}
+
+/* Text link */
+.prefooter-box__link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--color-accent, #e8000d);
+  text-decoration: none;
+  margin-top: auto;
+  transition: opacity 0.15s;
+}
+
+.prefooter-box__link:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+/* --- Newsletter box --- */
+.prefooter-newsletter-form {
+  display: flex;
+  gap: 0;
+  margin-top: 0.25rem;
+}
+
+.prefooter-newsletter-input {
+  flex: 1;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: none;
+  color: var(--color-text, #f0ece3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.prefooter-newsletter-input::placeholder {
+  color: var(--color-text-muted, #666);
+}
+
+.prefooter-newsletter-input:focus {
+  border-color: var(--color-accent, #e8000d);
+}
+
+.prefooter-newsletter-btn {
+  background: var(--color-accent, #e8000d);
+  border: 1px solid var(--color-accent, #e8000d);
+  color: #fff;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+
+.prefooter-newsletter-btn:hover {
+  opacity: 0.85;
+}
+
+.prefooter-newsletter-note {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--color-text-muted, #555);
+  margin: 0;
+}
+
+/* --- Support box buttons --- */
+.prefooter-support-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: auto;
+}
+
+.prefooter-support-btn {
+  display: block;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.65rem 1rem;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.prefooter-support-btn--primary {
+  background: var(--color-accent, #e8000d);
+  color: #fff;
+}
+
+.prefooter-support-btn--primary:hover {
+  opacity: 0.85;
+}
+
+.prefooter-support-btn--secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-muted, #999);
+}
+
+.prefooter-support-btn--secondary:hover {
+  border-color: var(--color-text, #f0ece3);
+  color: var(--color-text, #f0ece3);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .prefooter-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .prefooter-box:nth-child(2) {
+    border-right: none;
+  }
+
+  .prefooter-box:nth-child(3) {
+    grid-column: span 2;
+    border-right: none;
+  }
+}
+
+@media (max-width: 580px) {
+  .prefooter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .prefooter-box,
+  .prefooter-box:nth-child(3) {
+    grid-column: span 1;
+    border-right: none;
+  }
+}
