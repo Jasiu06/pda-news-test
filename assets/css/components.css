@@ -968,15 +968,13 @@
   }
 }
 
-/* ===================================
-   PRE-FOOTER BOXES
-   =================================== */
+/* ── PRE-FOOTER BOXES ─────────────────────── */
 
 .prefooter-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  border-top: 3px solid var(--color-accent, #e8000d);
+  border-top: 2px solid var(--color-accent);
   margin-top: 3rem;
 }
 
@@ -984,7 +982,6 @@
   padding: 2rem 1.75rem;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background-color: var(--color-bg, #111);
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
@@ -1001,7 +998,7 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-accent, #e8000d);
+  color: var(--color-accent);
 }
 
 /* Heading */
@@ -1010,7 +1007,7 @@
   font-size: 1.35rem;
   font-weight: 700;
   line-height: 1.25;
-  color: var(--color-text, #f0ece3);
+  color: var(--color-text);
   margin: 0;
 }
 
@@ -1019,7 +1016,7 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.88rem;
   line-height: 1.65;
-  color: var(--color-text-muted, #999);
+  color: var(--color-text-muted);
   margin: 0;
 }
 
@@ -1029,7 +1026,7 @@
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: var(--color-accent, #e8000d);
+  color: var(--color-accent);
   text-decoration: none;
   margin-top: auto;
   transition: opacity 0.15s;
@@ -1052,7 +1049,7 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-right: none;
-  color: var(--color-text, #f0ece3);
+  color: var(--color-text);
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.85rem;
   padding: 0.55rem 0.85rem;
@@ -1061,16 +1058,16 @@
 }
 
 .prefooter-newsletter-input::placeholder {
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted);
 }
 
 .prefooter-newsletter-input:focus {
-  border-color: var(--color-accent, #e8000d);
+  border-color: var(--color-accent);
 }
 
 .prefooter-newsletter-btn {
-  background: var(--color-accent, #e8000d);
-  border: 1px solid var(--color-accent, #e8000d);
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
   color: #fff;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.75rem;
@@ -1090,7 +1087,7 @@
 .prefooter-newsletter-note {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.68rem;
-  color: var(--color-text-muted, #555);
+  color: var(--color-text-muted);
   margin: 0;
 }
 
@@ -1116,7 +1113,7 @@
 }
 
 .prefooter-support-btn--primary {
-  background: var(--color-accent, #e8000d);
+  background: var(--color-accent);
   color: #fff;
 }
 
@@ -1127,12 +1124,12 @@
 .prefooter-support-btn--secondary {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--color-text-muted, #999);
+  color: var(--color-text-muted);
 }
 
 .prefooter-support-btn--secondary:hover {
-  border-color: var(--color-text, #f0ece3);
-  color: var(--color-text, #f0ece3);
+  border-color: var(--color-text);
+  color: var(--color-text);
 }
 
 /* --- Responsive --- */
